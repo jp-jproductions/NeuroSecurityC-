@@ -1,6 +1,0 @@
-{
-  "name": "Estado de Seguridad por Sede - NEUROMÉDICA",
-  "description": "Panel de monitoreo y control del estado de seguridad física y electrónica (cámaras y alarmas) para las sedes de NEUROMÉDICA.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

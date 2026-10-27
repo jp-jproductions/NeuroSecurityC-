@@ -1,10 +1,5 @@
-node_modules/
-build/
-dist/
-coverage/
 **/bin/
 **/obj/
 .DS_Store
 *.log
 .env*
-!.env.example
