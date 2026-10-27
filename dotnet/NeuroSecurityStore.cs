@@ -2,13 +2,17 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Npgsql;
+using NpgsqlTypes;
 
 public sealed class NeuroSecurityStore
 {
     private const string PasswordSalt = "neuromedica_salt_2026";
     private const string InitialOperationalNote = "Marcada como 100% operativa";
+    private const long PostgresWriteLockId = 824735921;
     private readonly object gate = new();
     private readonly string databasePath;
+    private readonly string? postgresConnectionString;
     private readonly JsonSerializerOptions jsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
@@ -16,6 +20,7 @@ public sealed class NeuroSecurityStore
         WriteIndented = true
     };
     private LocalDatabase database;
+    private WriteScope? activeWrite;
 
     public NeuroSecurityStore(IWebHostEnvironment environment, IConfiguration configuration)
     {
@@ -27,12 +32,22 @@ public sealed class NeuroSecurityStore
         var json = File.ReadAllText(databasePath);
         database = JsonSerializer.Deserialize<LocalDatabase>(json, jsonOptions)
             ?? throw new InvalidDataException("La base de datos local no contiene datos válidos.");
+
+        postgresConnectionString = BuildPostgresConnectionString(
+            configuration["DATABASE_URL"] ?? configuration["POSTGRES_URL"]);
+        if (environment.IsProduction() && postgresConnectionString is null)
+            throw new InvalidOperationException("Configure DATABASE_URL en producción para usar almacenamiento persistente.");
+        if (postgresConnectionString is not null)
+            InitializePostgres();
     }
+
+    public bool IsPersistent => postgresConnectionString is not null;
 
     public List<SedeView> GetSedes(bool includeArchived = false)
     {
         lock (gate)
         {
+            RefreshFromPostgres();
             return database.sedes.Where(s => includeArchived || s.activa)
                 .OrderBy(s => s.orden)
                 .Select(Enrich)
@@ -44,6 +59,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            RefreshFromPostgres();
             var sede = database.sedes.FirstOrDefault(s => s.id == id);
             return sede is null ? null : Enrich(sede);
         }
@@ -67,6 +83,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            RefreshFromPostgres();
             var rows = database.historial
                 .Where(h => string.IsNullOrEmpty(sedeId) || h.sede_id == sedeId)
                 .OrderByDescending(h => h.fecha)
@@ -79,6 +96,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            RefreshFromPostgres();
             var user = database.usuarios.FirstOrDefault(u => u.email.Equals(email.Trim(), StringComparison.OrdinalIgnoreCase));
             if (user is null || !FixedEquals(user.password_hash, HashPassword(password)))
                 throw new StoreException(401, "Credenciales inválidas. Verifique el correo o contraseña.");
@@ -90,6 +108,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            RefreshFromPostgres();
             var user = database.usuarios.FirstOrDefault(u => u.id == id);
             return user is null ? null : PublicUser(user);
         }
@@ -97,7 +116,11 @@ public sealed class NeuroSecurityStore
 
     public List<AdminUser> GetUsers()
     {
-        lock (gate) return database.usuarios.Select(PublicUser).ToList();
+        lock (gate)
+        {
+            RefreshFromPostgres();
+            return database.usuarios.Select(PublicUser).ToList();
+        }
     }
 
     public AdminUser CreateUser(string email, string name, string password, string role)
@@ -106,6 +129,7 @@ public sealed class NeuroSecurityStore
             throw new StoreException(400, "Faltan campos obligatorios (email, nombre, password).");
         lock (gate)
         {
+            using var write = BeginWrite();
             var normalizedEmail = email.Trim().ToLowerInvariant();
             if (database.usuarios.Any(u => u.email.Equals(normalizedEmail, StringComparison.OrdinalIgnoreCase)))
                 throw new StoreException(400, "Ya existe un administrador con este correo.");
@@ -128,6 +152,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             if (actor.rol != "superadmin")
                 throw new StoreException(403, "Solo un superadministrador puede eliminar a otro superadministrador.");
             if (actor.id == id)
@@ -151,6 +176,7 @@ public sealed class NeuroSecurityStore
             throw new StoreException(400, "La nueva contraseña debe tener mínimo 6 caracteres.");
         lock (gate)
         {
+            using var write = BeginWrite();
             var user = database.usuarios.FirstOrDefault(u => u.id == id)
                 ?? throw new StoreException(404, "Usuario no encontrado.");
             if (!FixedEquals(user.password_hash, HashPassword(currentPassword)))
@@ -164,6 +190,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             var sede = FindSede(id);
             var previous = GetState(sede);
             var next = new StateRow
@@ -187,6 +214,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             var sede = FindSede(id);
             var previous = GetState(sede);
             var next = new StateRow
@@ -206,6 +234,7 @@ public sealed class NeuroSecurityStore
         if (updates.Count == 0) throw new StoreException(400, "Lista de actualizaciones inválida o vacía.");
         lock (gate)
         {
+            using var write = BeginWrite();
             var candidates = new List<(SedeRow sede, StateRow previous, StateRow next)>();
             foreach (var update in updates)
             {
@@ -239,6 +268,7 @@ public sealed class NeuroSecurityStore
         if (string.IsNullOrWhiteSpace(name)) throw new StoreException(400, "El nombre de la sede es obligatorio.");
         lock (gate)
         {
+            using var write = BeginWrite();
             var now = UtcNow();
             var sede = new SedeRow
             {
@@ -264,6 +294,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             var sede = FindSede(id);
             if (!string.IsNullOrWhiteSpace(name)) sede.nombre = name.Trim().ToUpperInvariant();
             if (!string.IsNullOrWhiteSpace(group)) sede.grupo = group.Trim().ToUpperInvariant();
@@ -278,6 +309,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             var sede = FindSede(id);
             sede.activa = !sede.activa;
             AddDeletionHistory(sede, actor, false);
@@ -290,6 +322,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             var sede = FindSede(id);
             AddDeletionHistory(sede, actor, true);
             database.sedes.Remove(sede);
@@ -302,6 +335,7 @@ public sealed class NeuroSecurityStore
     {
         lock (gate)
         {
+            using var write = BeginWrite();
             var now = UtcNow();
             foreach (var sede in database.sedes)
             {
@@ -414,13 +448,149 @@ public sealed class NeuroSecurityStore
                 : $"Selecciona una novedad válida para las cámaras de la sede \"{locationName}\".");
     }
 
+    private WriteScope? BeginWrite()
+    {
+        if (postgresConnectionString is null) return null;
+        if (activeWrite is not null)
+            throw new InvalidOperationException("Ya existe una transacción de escritura activa.");
+
+        var connection = new NpgsqlConnection(postgresConnectionString);
+        connection.Open();
+        var transaction = connection.BeginTransaction();
+        try
+        {
+            using (var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(@lock_id)", connection, transaction))
+            {
+                command.Parameters.AddWithValue("lock_id", PostgresWriteLockId);
+                command.ExecuteNonQuery();
+            }
+
+            database = LoadPostgresDatabase(connection, transaction);
+            activeWrite = new WriteScope(this, connection, transaction);
+            return activeWrite;
+        }
+        catch
+        {
+            transaction.Dispose();
+            connection.Dispose();
+            throw;
+        }
+    }
+
+    private void RefreshFromPostgres()
+    {
+        if (postgresConnectionString is null) return;
+        using var connection = new NpgsqlConnection(postgresConnectionString);
+        connection.Open();
+        database = LoadPostgresDatabase(connection, null);
+    }
+
+    private void InitializePostgres()
+    {
+        using var connection = new NpgsqlConnection(postgresConnectionString);
+        connection.Open();
+        using (var command = new NpgsqlCommand(
+            "CREATE TABLE IF NOT EXISTS neurosecurity_state (id smallint PRIMARY KEY CHECK (id = 1), payload jsonb NOT NULL)",
+            connection))
+            command.ExecuteNonQuery();
+
+        using (var command = new NpgsqlCommand(
+            "INSERT INTO neurosecurity_state (id, payload) VALUES (1, @payload) ON CONFLICT (id) DO NOTHING",
+            connection))
+        {
+            command.Parameters.Add("payload", NpgsqlDbType.Jsonb).Value = JsonSerializer.Serialize(database, jsonOptions);
+            command.ExecuteNonQuery();
+        }
+
+        database = LoadPostgresDatabase(connection, null);
+    }
+
+    private LocalDatabase LoadPostgresDatabase(NpgsqlConnection connection, NpgsqlTransaction? transaction)
+    {
+        using var command = new NpgsqlCommand(
+            "SELECT payload::text FROM neurosecurity_state WHERE id = 1",
+            connection,
+            transaction);
+        var payload = command.ExecuteScalar() as string
+            ?? throw new InvalidDataException("No se encontró el estado de la aplicación en PostgreSQL.");
+        return JsonSerializer.Deserialize<LocalDatabase>(payload, jsonOptions)
+            ?? throw new InvalidDataException("La base de datos PostgreSQL no contiene datos válidos.");
+    }
+
+    private static string? BuildPostgresConnectionString(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+        value = value.Trim();
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri)
+            || (uri.Scheme != "postgres" && uri.Scheme != "postgresql"))
+            return new NpgsqlConnectionStringBuilder(value).ConnectionString;
+
+        var credentials = uri.UserInfo.Split(':', 2);
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = uri.Host,
+            Port = uri.IsDefaultPort ? 5432 : uri.Port,
+            Username = Uri.UnescapeDataString(credentials[0]),
+            Password = credentials.Length > 1 ? Uri.UnescapeDataString(credentials[1]) : "",
+            Database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
+            SslMode = SslMode.Require,
+            Timeout = 15,
+            CommandTimeout = 30
+        };
+
+        foreach (var parameter in uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var pair = parameter.Split('=', 2);
+            if (pair.Length == 2 && pair[0].Equals("sslmode", StringComparison.OrdinalIgnoreCase)
+                && Enum.TryParse<SslMode>(Uri.UnescapeDataString(pair[1]), true, out var sslMode))
+                builder.SslMode = sslMode;
+        }
+        return builder.ConnectionString;
+    }
+
     private void Save()
     {
+        if (postgresConnectionString is not null)
+        {
+            var write = activeWrite
+                ?? throw new InvalidOperationException("La escritura PostgreSQL requiere una transacción activa.");
+            using var command = new NpgsqlCommand(
+                "UPDATE neurosecurity_state SET payload = @payload WHERE id = 1",
+                write.Connection,
+                write.Transaction);
+            command.Parameters.Add("payload", NpgsqlDbType.Jsonb).Value = JsonSerializer.Serialize(database, jsonOptions);
+            if (command.ExecuteNonQuery() != 1)
+                throw new InvalidOperationException("No se pudo guardar el estado en PostgreSQL.");
+            write.Commit();
+            return;
+        }
+
         var directory = Path.GetDirectoryName(databasePath) ?? throw new InvalidOperationException("No se pudo determinar la carpeta de la base de datos.");
         Directory.CreateDirectory(directory);
         var temporaryPath = databasePath + ".tmp";
         File.WriteAllText(temporaryPath, JsonSerializer.Serialize(database, jsonOptions), new UTF8Encoding(false));
         File.Move(temporaryPath, databasePath, true);
+    }
+
+    private sealed class WriteScope(NeuroSecurityStore owner, NpgsqlConnection connection, NpgsqlTransaction transaction) : IDisposable
+    {
+        public NpgsqlConnection Connection { get; } = connection;
+        public NpgsqlTransaction Transaction { get; } = transaction;
+
+        public void Commit() => Transaction.Commit();
+
+        public void Dispose()
+        {
+            try
+            {
+                Transaction.Dispose();
+                Connection.Dispose();
+            }
+            finally
+            {
+                owner.activeWrite = null;
+            }
+        }
     }
 
     private static AdminUser PublicUser(UserRow user) => new()

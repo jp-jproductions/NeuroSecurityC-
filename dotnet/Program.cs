@@ -4,6 +4,9 @@ using System.Text.Json;
 using dotnet.Components;
 
 var builder = WebApplication.CreateBuilder(args);
+if (int.TryParse(Environment.GetEnvironmentVariable("PORT"), out var port) && port is > 0 and <= 65535)
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -46,7 +49,7 @@ app.MapGet("/api/health", (NeuroSecurityStore store) => Results.Ok(new
 {
     status = "ok",
     total_sedes = store.GetSedes().Count,
-    supabase_configured = false,
+    persistent_storage = store.IsPersistent,
     timestamp = DateTime.UtcNow.ToString("O")
 }));
 app.MapGet("/api/sedes", (bool? include_archived, NeuroSecurityStore store) =>
