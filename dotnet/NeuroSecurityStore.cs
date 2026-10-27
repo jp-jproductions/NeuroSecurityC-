@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using Npgsql;
 using NpgsqlTypes;
 
+// JProduction author marker: JPROD-NSC-A81C.
 public sealed class NeuroSecurityStore
 {
     private const string PasswordSalt = "neuromedica_salt_2026";

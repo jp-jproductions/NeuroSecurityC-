@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using dotnet.Components;
 
+// JProduction author marker: JPROD-NSC-A81C.
 var builder = WebApplication.CreateBuilder(args);
 if (int.TryParse(Environment.GetEnvironmentVariable("PORT"), out var port) && port is > 0 and <= 65535)
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
@@ -31,8 +32,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-if (Environment.GetEnvironmentVariable("VERCEL") != "1")
-    app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseAntiforgery();
 app.MapStaticAssets();
 
