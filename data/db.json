@@ -1,0 +1,943 @@
+{
+  "sedes": [
+    {
+      "id": "sede-1",
+      "nombre": "CEDI",
+      "grupo": "CEDI",
+      "activa": true,
+      "orden": 1,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-2",
+      "nombre": "CEDI 2 MAYORCA P7",
+      "grupo": "CEDI",
+      "activa": true,
+      "orden": 2,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-3",
+      "nombre": "CEDI COMPRAS",
+      "grupo": "CEDI",
+      "activa": true,
+      "orden": 3,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-4",
+      "nombre": "DROGUERIA MEDICAL TOWER",
+      "grupo": "DROGUERÍAS Y FARMA",
+      "activa": true,
+      "orden": 4,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-5",
+      "nombre": "FARMA NORTE",
+      "grupo": "DROGUERÍAS Y FARMA",
+      "activa": true,
+      "orden": 5,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-6",
+      "nombre": "FARMA SUR",
+      "grupo": "DROGUERÍAS Y FARMA",
+      "activa": true,
+      "orden": 6,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-7",
+      "nombre": "FARMA MANIZALES",
+      "grupo": "DROGUERÍAS Y FARMA",
+      "activa": true,
+      "orden": 7,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-8",
+      "nombre": "SF ALMACENTRO",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 8,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-9",
+      "nombre": "SF ALMACENTRO 2",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 9,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-10",
+      "nombre": "SF ARRAYANES",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 10,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-11",
+      "nombre": "SF CITY PLAZA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 11,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-12",
+      "nombre": "SF COPACABANA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 12,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-13",
+      "nombre": "SF ENVIGADO CENTRO",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 13,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-14",
+      "nombre": "SF MAYORCA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 14,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-15",
+      "nombre": "SF SABANETA PARQUE",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 15,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-16",
+      "nombre": "SF APARTADO 1",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 16,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-17",
+      "nombre": "SF APARTADO 2",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 17,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-18",
+      "nombre": "SF BOGOTA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 18,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-19",
+      "nombre": "SF BARRANQUILLA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 19,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-20",
+      "nombre": "SF LA CEJA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 20,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-21",
+      "nombre": "SF RIONEGRO",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 21,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-22",
+      "nombre": "SF BUCARAMANGA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 22,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-23",
+      "nombre": "SF CABECERA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 23,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-24",
+      "nombre": "SF FLORIDABLANCA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 24,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-25",
+      "nombre": "SF PIEDECUESTA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 25,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-26",
+      "nombre": "SF ARMENIA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 26,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-27",
+      "nombre": "SF MANIZALES",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 27,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-28",
+      "nombre": "SF PEREIRA ACTUAL",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 28,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-29",
+      "nombre": "SF PEREIRA EN OBRA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 29,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-30",
+      "nombre": "SF ARBOLETES",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 30,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-31",
+      "nombre": "SF CAREPA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 31,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-32",
+      "nombre": "SF CHIGORODO",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 32,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-33",
+      "nombre": "SF CURRULAO",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 33,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-34",
+      "nombre": "SF NUEVA COLONIA",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 34,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-35",
+      "nombre": "SF TURBO",
+      "grupo": "SF (PUNTOS DE VENTA)",
+      "activa": true,
+      "orden": 35,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-36",
+      "nombre": "DOMICILIOS 1",
+      "grupo": "DOMICILIOS",
+      "activa": true,
+      "orden": 36,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-37",
+      "nombre": "DOMICILIOS 2",
+      "grupo": "DOMICILIOS",
+      "activa": true,
+      "orden": 37,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-38",
+      "nombre": "IPS MAYORCA PISO 7",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 38,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-39",
+      "nombre": "IPS MAYORCA PISO 8",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 39,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-40",
+      "nombre": "IPS MAYORCA PISO 14",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 40,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-41",
+      "nombre": "IPS PEREIRA",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 41,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-42",
+      "nombre": "IPS RIONEGRO PISO 5",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 42,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-43",
+      "nombre": "IPS RIONEGRO PISO 6",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 43,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-44",
+      "nombre": "IPS BOGOTA",
+      "grupo": "IPS",
+      "activa": true,
+      "orden": 44,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-45",
+      "nombre": "ADMIN MAYORCA PISO 8",
+      "grupo": "ADMINISTRATIVAS",
+      "activa": true,
+      "orden": 45,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-46",
+      "nombre": "ADMIN RIONEGRO PISO 4",
+      "grupo": "ADMINISTRATIVAS",
+      "activa": true,
+      "orden": 46,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-47",
+      "nombre": "MEDICAL TOWER",
+      "grupo": "MEDICAL TOWER",
+      "activa": true,
+      "orden": 47,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-48",
+      "nombre": "RAYOS X 1",
+      "grupo": "RAYOS X",
+      "activa": true,
+      "orden": 48,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-49",
+      "nombre": "RAYOS X 2",
+      "grupo": "RAYOS X",
+      "activa": true,
+      "orden": 49,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-50",
+      "nombre": "RAYOS X MEDICAL TOWER",
+      "grupo": "RAYOS X",
+      "activa": true,
+      "orden": 50,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "sede-51",
+      "nombre": "AXON",
+      "grupo": "OTROS",
+      "activa": true,
+      "orden": 51,
+      "creada_en": "2026-10-26T01:15:29.656Z"
+    }
+  ],
+  "estados": {
+    "sede-1": {
+      "sede_id": "sede-1",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T03:47:13.540Z",
+      "actualizado_en": "2026-10-26T03:47:13.540Z",
+      "actualizado_por": "Administrador de Seguridad"
+    },
+    "sede-2": {
+      "sede_id": "sede-2",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-3": {
+      "sede_id": "sede-3",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-4": {
+      "sede_id": "sede-4",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-5": {
+      "sede_id": "sede-5",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-6": {
+      "sede_id": "sede-6",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-7": {
+      "sede_id": "sede-7",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-8": {
+      "sede_id": "sede-8",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-9": {
+      "sede_id": "sede-9",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-10": {
+      "sede_id": "sede-10",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-11": {
+      "sede_id": "sede-11",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-12": {
+      "sede_id": "sede-12",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-13": {
+      "sede_id": "sede-13",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-14": {
+      "sede_id": "sede-14",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-15": {
+      "sede_id": "sede-15",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-16": {
+      "sede_id": "sede-16",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-17": {
+      "sede_id": "sede-17",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-18": {
+      "sede_id": "sede-18",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-19": {
+      "sede_id": "sede-19",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-20": {
+      "sede_id": "sede-20",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-21": {
+      "sede_id": "sede-21",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-22": {
+      "sede_id": "sede-22",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-23": {
+      "sede_id": "sede-23",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-24": {
+      "sede_id": "sede-24",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-25": {
+      "sede_id": "sede-25",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-26": {
+      "sede_id": "sede-26",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-27": {
+      "sede_id": "sede-27",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-28": {
+      "sede_id": "sede-28",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-29": {
+      "sede_id": "sede-29",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-30": {
+      "sede_id": "sede-30",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-31": {
+      "sede_id": "sede-31",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-32": {
+      "sede_id": "sede-32",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-33": {
+      "sede_id": "sede-33",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-34": {
+      "sede_id": "sede-34",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-35": {
+      "sede_id": "sede-35",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-36": {
+      "sede_id": "sede-36",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-37": {
+      "sede_id": "sede-37",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-38": {
+      "sede_id": "sede-38",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-39": {
+      "sede_id": "sede-39",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-40": {
+      "sede_id": "sede-40",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-41": {
+      "sede_id": "sede-41",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-42": {
+      "sede_id": "sede-42",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-43": {
+      "sede_id": "sede-43",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-44": {
+      "sede_id": "sede-44",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-45": {
+      "sede_id": "sede-45",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-46": {
+      "sede_id": "sede-46",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-47": {
+      "sede_id": "sede-47",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-48": {
+      "sede_id": "sede-48",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-49": {
+      "sede_id": "sede-49",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-50": {
+      "sede_id": "sede-50",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    },
+    "sede-51": {
+      "sede_id": "sede-51",
+      "estado_camaras": "operativo",
+      "estado_alarma": "operativo",
+      "nota": "",
+      "fecha_revision": "2026-10-26T01:15:29.656Z",
+      "actualizado_en": "2026-10-26T01:15:29.656Z",
+      "actualizado_por": "Sistema Inicial"
+    }
+  },
+  "historial": [
+    {
+      "id": "hist-1792986433603-on12l",
+      "sede_id": "sede-1",
+      "sede_nombre": "CEDI",
+      "fecha": "2026-10-26T03:47:13.540Z",
+      "usuario": "Administrador de Seguridad",
+      "estado_camaras_anterior": "operativo",
+      "estado_camaras_nuevo": "operativo",
+      "estado_alarma_anterior": "operativo",
+      "estado_alarma_nuevo": "operativo",
+      "nota_anterior": "",
+      "nota_nueva": "",
+      "tipo_evento": "actualizacion"
+    },
+    {
+      "id": "hist-init",
+      "sede_id": "todas",
+      "sede_nombre": "Todas las Sedes",
+      "fecha": "2026-10-26T01:15:29.656Z",
+      "usuario": "Sistema",
+      "estado_camaras_anterior": "operativo",
+      "estado_camaras_nuevo": "operativo",
+      "estado_alarma_anterior": "operativo",
+      "estado_alarma_nuevo": "operativo",
+      "nota_anterior": "",
+      "nota_nueva": "Carga inicial del sistema. Todas las sedes operativas.",
+      "tipo_evento": "creacion"
+    },
+    {
+      "id": "hist-1792984734503-md1tf",
+      "sede_id": "sede-1",
+      "sede_nombre": "CEDI",
+      "fecha": "2026-10-26T03:18:54.503Z",
+      "usuario": "Administrador de Seguridad",
+      "estado_camaras_anterior": "operativo",
+      "estado_camaras_nuevo": "operativo",
+      "estado_alarma_anterior": "operativo",
+      "estado_alarma_nuevo": "operativo",
+      "nota_anterior": "",
+      "nota_nueva": "",
+      "tipo_evento": "actualizacion"
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "admin-pablo",
+      "email": "pablo.escobar@neuromedica.com.co",
+      "nombre": "Pablo Escobar",
+      "password_hash": "cc740782e0818b3b8d3be5d66a4106d8dc1c626ee6e177067d32964bd5e9282c05d463214ffcba9a346c6e0b7f6ff2d95aeb90375d09d1ea04fba5041c72fd4d",
+      "rol": "superadmin",
+      "creado_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "admin-1",
+      "email": "admin@neuromedica.com",
+      "nombre": "Administrador de Seguridad",
+      "password_hash": "edf53735a0382444ed6df3677bac7b461e98aac44594056767cf52440a5b98985d643319b8dd15c0c38a2732f6cd1c4d3dc63aa023e966cc6bc521efac723d47",
+      "rol": "superadmin",
+      "creado_en": "2026-10-26T01:15:29.656Z"
+    },
+    {
+      "id": "admin-jupaesra",
+      "email": "jupaesra170504@gmail.com",
+      "nombre": "Superadministrador",
+      "password_hash": "edf53735a0382444ed6df3677bac7b461e98aac44594056767cf52440a5b98985d643319b8dd15c0c38a2732f6cd1c4d3dc63aa023e966cc6bc521efac723d47",
+      "rol": "superadmin",
+      "creado_en": "2026-10-26T01:15:29.656Z"
+    }
+  ]
+}

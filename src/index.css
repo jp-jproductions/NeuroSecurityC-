@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-neuromedica-white: #ffffff;
+    --color-neuromedica-cyan: #00a6e4;
+    --color-neuromedica-dark: #1a1a37;
+    --color-primary: #00a6e4;
+    --color-primary-hover: #008ec5;
+    --color-text-main: #1a1a37;
+    --color-text-muted: #646482;
+  }
+
+  html, body {
+    background-color: #ffffff !important;
+    color: #1a1a37;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Crisp white cards with clean borders and subtle shadow */
+.dashboard-card {
+  background-color: #ffffff;
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 10px -1px rgba(26, 26, 55, 0.04);
+  border: 1px solid #e7ebf2;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-card {
+  background-color: #ffffff;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 18px -2px rgba(26, 26, 55, 0.06);
+  border: 1px solid #e7ebf2;
+}
+
+/* Print styles for executive security PDF report */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .dashboard-card, .floating-card {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+}
+
+/* VeilGuard Hero Animations & Flow Effects */
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes heroRiseUnblur {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes hubPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+.animate-hero-fade {
+  animation: heroFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-hero-rise-1 {
+  animation: heroRiseUnblur 0.9s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-rise-2 {
+  animation: heroRiseUnblur 0.9s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-rise-3 {
+  animation: heroRiseUnblur 0.9s 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-sub {
+  animation: heroRiseUnblur 0.9s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hero-btn {
+  animation: heroRiseUnblur 0.9s 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-flow-card {
+  animation: heroRiseUnblur 1s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-hub-pop {
+  animation: hubPop 0.8s 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-clean-pill-1 {
+  animation: heroRiseUnblur 0.6s 1.0s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-clean-pill-2 {
+  animation: heroRiseUnblur 0.6s 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-clean-pill-3 {
+  animation: heroRiseUnblur 0.6s 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-fade,
+  .animate-hero-rise-1,
+  .animate-hero-rise-2,
+  .animate-hero-rise-3,
+  .animate-hero-sub,
+  .animate-hero-btn,
+  .animate-flow-card,
+  .animate-hub-pop,
+  .animate-clean-pill-1,
+  .animate-clean-pill-2,
+  .animate-clean-pill-3 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+

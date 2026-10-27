@@ -1,0 +1,384 @@
+@page "/"
+@rendermode InteractiveServer
+@implements IDisposable
+@inject NeuroSecurityStore Store
+@inject IJSRuntime JS
+
+<PageTitle>Neuromédica | Seguridad</PageTitle>
+
+<div class="shell">
+    <aside class="sidebar">
+        <div class="brand"><img src="/assets/logo.webp" alt="Neuromédica" /><span>SEGURIDAD</span></div>
+        <nav>
+            @foreach (var tab in Tabs)
+            {
+                <button class="nav-link @(currentTab == tab.Key ? "selected" : "")" @onclick="() => SelectTab(tab.Key)">
+                    <span>@tab.Icon</span>@tab.Label
+                    @if (tab.Key == "novedades" && IssueCount > 0) { <b class="nav-count">@IssueCount</b> }
+                </button>
+            }
+        </nav>
+        <div class="sidebar-footer">
+            @if (user is null)
+            {
+                <button class="login-link" @onclick="() => loginOpen = !loginOpen">🔒 Acceso administrador</button>
+            }
+            else
+            {
+                <div class="user-summary"><strong>@user.nombre</strong><small>@user.email</small></div>
+                <button class="login-link" @onclick="Logout">Cerrar sesión</button>
+            }
+        </div>
+    </aside>
+
+    <main class="workspace">
+        <header class="topbar">
+            <div><h1>@TabTitle</h1><p>NEUROMÉDICA · Sistema Central de Seguridad y Cámaras</p></div>
+            <div class="toolbar">
+                <span class="clock">@BogotaTime()</span>
+                <button class="button secondary" @onclick="LoadData">↻ Actualizar</button>
+                <button class="button secondary" @onclick="Print">Imprimir</button>
+            </div>
+        </header>
+
+        @if (error is not null) { <div class="alert error">@error</div> }
+        @if (notice is not null) { <div class="alert success">@notice</div> }
+
+        @if (loginOpen && user is null)
+        {
+            <section class="panel login-panel">
+                <h2>Acceso administrador</h2>
+                <div class="form-grid">
+                    <label>Correo<input type="email" @bind="loginEmail" autocomplete="username" /></label>
+                    <label>Contraseña<input type="password" @bind="loginPassword" @onkeydown="LoginOnEnter" autocomplete="current-password" /></label>
+                </div>
+                <button class="button primary" @onclick="Login">Iniciar sesión</button>
+            </section>
+        }
+
+        @if (loading)
+        {
+            <section class="panel loading">Cargando estado de las sedes…</section>
+        }
+        else
+        {
+            @if (user is not null)
+            {
+                <section class="admin-banner">
+                    <div><strong>Modo administrador activo</strong><span>@user.email</span></div>
+                    <div class="toolbar">
+                        <button class="button light" @onclick="OpenBulkReview">Pase de guardia</button>
+                        <button class="button light" @onclick="OpenSedeManagement">Gestión de sedes</button>
+                    </div>
+                </section>
+            }
+
+            @if (currentTab == "resumen")
+            {
+                <section class="stats-grid">
+                    <StatCard Label="Sedes activas" Value="@stats.total_sedes" Tone="blue" />
+                    <StatCard Label="100% operativas" Value="@stats.operativas_100" Tone="green" />
+                    <StatCard Label="Con novedad" Value="@stats.con_novedad" Tone="amber" />
+                    <StatCard Label="Desactivadas" Value="@stats.con_desactivado" Tone="red" />
+                    <StatCard Label="Sin revisión (+4 días)" Value="@stats.desactualizadas" Tone="slate" />
+                </section>
+            }
+
+            @if (currentTab is "resumen" or "sedes" or "novedades")
+            {
+                <section class="panel">
+                    <div class="section-heading">
+                        <div><h2>@(currentTab == "novedades" ? "Novedades y alarmas activas" : "Sedes y puntos de atención")</h2><p>@visibleSedes.Count() sedes encontradas</p></div>
+                        @if (user is not null) { <button class="button primary" @onclick="() => showSedeForm = !showSedeForm">+ Nueva sede</button> }
+                    </div>
+                    @if (showSedeForm && user is not null)
+                    {
+                        <div class="inline-form">
+                            <label>Nombre<input @bind="newName" /></label>
+                            <label>Grupo<input @bind="newGroup" /></label>
+                            <button class="button primary" @onclick="CreateSede">Crear sede</button>
+                        </div>
+                    }
+                    <div class="filters">
+                        <input placeholder="Buscar sede, grupo o nota…" @bind="search" @bind:event="oninput" />
+                        <select @bind="selectedGroup"><option value="TODOS">Todos los grupos</option>@foreach (var group in Groups) { <option value="@group">@group</option> }</select>
+                        <select @bind="statusFilter">
+                            <option value="todas">Todos los estados</option><option value="operativas">Operativas</option>
+                            <option value="novedad">Con novedad</option><option value="desactivadas">Desactivadas</option>
+                        </select>
+                        <select @bind="sortBy"><option value="prioridad">Orden: prioridad</option><option value="alfabetico">Orden: alfabético</option><option value="revision">Orden: última revisión</option></select>
+                    </div>
+                    <div class="sede-grid">
+                        @foreach (var sede in visibleSedes)
+                        {
+                            <article class="sede-card @(sede.tiene_desactivado ? "critical" : sede.tiene_novedad ? "warning" : "")">
+                                <div class="card-top"><span class="group-pill">@sede.grupo</span><span class="status-pill @StatusClass(sede)">@GlobalStatus(sede)</span></div>
+                                <h3>@sede.nombre</h3>
+                                <div class="system-status"><span>Cámaras <b class="@sede.estado_camaras">@StatusText(sede.estado_camaras)</b></span><span>Alarma <b class="@sede.estado_alarma">@StatusText(sede.estado_alarma)</b></span></div>
+                                @if (!string.IsNullOrWhiteSpace(sede.nota)) { <p class="note"><strong>Novedad:</strong> @sede.nota</p> }
+                                <div class="card-footer"><span>Revisión: @BogotaDate(sede.fecha_revision)</span><button class="text-button" @onclick="() => OpenHistory(sede)">Historial</button></div>
+                                @if (user is not null)
+                                {
+                                    <div class="card-actions">
+                                        @if (!sede.es_100_operativa) { <button class="button success" @onclick="() => MarkOperational(sede)">Marcar OK</button> }
+                                        <button class="button secondary" @onclick="() => EditSedeStatus(sede)">Editar sede / estado</button>
+                                        <button class="button secondary" @onclick="() => ToggleArchive(sede)">@(sede.activa ? "Archivar" : "Reactivar")</button>
+                                        <button class="button danger" @onclick="() => DeletePermanent(sede)">Eliminar</button>
+                                    </div>
+                                }
+                            </article>
+                        }
+                    </div>
+                </section>
+            }
+
+            @if (currentTab == "historial")
+            {
+                <section class="panel">
+                    <div class="section-heading"><div><h2>Historial de auditoría</h2><p>Eventos recientes del sistema</p></div></div>
+                    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Sede</th><th>Usuario</th><th>Evento</th><th>Cámaras</th><th>Alarma</th><th>Detalle</th></tr></thead>
+                    <tbody>@foreach (var h in history) { <tr><td>@BogotaDate(h.fecha)</td><td>@h.sede_nombre</td><td>@h.usuario</td><td>@h.tipo_evento</td><td>@h.estado_camaras_anterior → @h.estado_camaras_nuevo</td><td>@h.estado_alarma_anterior → @h.estado_alarma_nuevo</td><td>@h.nota_nueva</td></tr> }</tbody></table></div>
+                </section>
+            }
+
+            @if (currentTab == "reportes")
+            {
+                <section class="panel report-panel"><h2>Centro de reportes ejecutivos</h2><p>Imprime un informe o descarga los datos para su análisis.</p>
+                    <div class="report-actions"><button class="button primary" @onclick="ExportSedes">Descargar sedes CSV</button><button class="button secondary" @onclick="ExportHistory">Descargar historial CSV</button><button class="button secondary" @onclick="Print">Imprimir / Guardar PDF</button></div>
+                </section>
+            }
+
+            @if (currentTab == "admin")
+            {
+                <section class="panel"><h2>Panel de administración</h2><p>Gestión de administradores, sedes y revisión de seguridad.</p>
+                    <div class="report-actions"><button class="button primary" @onclick="OpenBulkReview">Pase de guardia masivo</button><button class="button secondary" @onclick="ToggleArchived">@(showArchived ? "Ocultar archivadas" : "Mostrar archivadas")</button><button class="button secondary" @onclick="ResetDefaults">Restablecer estados y sedes archivadas</button></div>
+                    @if (user is not null)
+                    {
+                        <div class="admin-users">
+                            <h3>Administradores</h3>
+                            @foreach (var admin in users) { <div class="user-row"><strong>@admin.nombre</strong><span>@admin.email</span><span class="group-pill">@admin.rol</span></div> }
+                            <h3>Crear administrador</h3>
+                            <div class="inline-form">
+                                <label>Nombre<input @bind="newUserName" /></label>
+                                <label>Correo<input type="email" @bind="newUserEmail" /></label>
+                                <label>Contraseña<input type="password" @bind="newUserPassword" /></label>
+                                <label>Rol<select @bind="newUserRole"><option value="admin">Administrador</option><option value="superadmin">Superadministrador</option></select></label>
+                            </div>
+                            <button class="button primary" @onclick="CreateAdmin">Crear administrador</button>
+                            <h3>Cambiar contraseña</h3>
+                            <div class="inline-form">
+                                <label>Contraseña actual<input type="password" @bind="currentPassword" /></label>
+                                <label>Nueva contraseña<input type="password" @bind="newPassword" /></label>
+                            </div>
+                            <button class="button secondary" @onclick="ChangePassword">Actualizar contraseña</button>
+                        </div>
+                    }
+                </section>
+            }
+        }
+    </main>
+</div>
+
+@if (editTarget is not null)
+{
+    <div class="modal-backdrop"><section class="modal panel">
+        <div class="section-heading"><h2>Actualizar · @editTarget.nombre</h2><button class="text-button" @onclick="CloseEdit">Cerrar</button></div>
+        <div class="form-grid">
+            <label>Estado de cámaras<select @bind="editCameras"><option value="operativo">Operativo</option><option value="desactivado">Desactivado</option><option value="novedad">Con novedad</option></select></label>
+            <label>Estado de alarma<select @bind="editAlarm"><option value="operativo">Operativo</option><option value="desactivado">Desactivado</option><option value="novedad">Con novedad</option></select></label>
+            <label>Nombre de sede<input @bind="editName" /></label>
+            <label>Grupo<input @bind="editGroup" /></label>
+            <label class="wide">Nota / novedad<textarea @bind="editNote"></textarea></label>
+        </div>
+        <div class="modal-actions"><button class="button secondary" @onclick="CloseEdit">Cancelar</button><button class="button primary" @onclick="SaveStatus">Guardar cambios</button></div>
+    </section></div>
+}
+
+@if (showBulk && user is not null)
+{
+    <div class="modal-backdrop"><section class="modal panel wide-modal">
+        <div class="section-heading"><div><h2>Pase de guardia</h2><p>Marca las sedes revisadas y guarda sus estados.</p></div><button class="text-button" @onclick="() => showBulk = false">Cerrar</button></div>
+        <div class="bulk-list">@foreach (var sede in sedes.Where(s => s.activa)) {
+            <div class="bulk-row"><label class="check-label"><input type="checkbox" @bind="bulkSelected[sede.id]" /> @sede.nombre</label>
+            <select @bind="bulkCameras[sede.id]"><option value="operativo">Cámaras: operativo</option><option value="desactivado">Cámaras: desactivado</option><option value="novedad">Cámaras: novedad</option></select>
+            <select @bind="bulkAlarms[sede.id]"><option value="operativo">Alarma: operativo</option><option value="desactivado">Alarma: desactivado</option><option value="novedad">Alarma: novedad</option></select></div>
+        }</div>
+        <label class="wide">Nota general<input @bind="bulkNote" /></label>
+        <div class="modal-actions"><button class="button secondary" @onclick="() => showBulk = false">Cancelar</button><button class="button primary" @onclick="SaveBulk">Guardar revisión</button></div>
+    </section></div>
+}
+
+@if (historyTarget is not null)
+{
+    <div class="modal-backdrop"><section class="modal panel">
+        <div class="section-heading"><h2>Historial · @historyTarget.nombre</h2><button class="text-button" @onclick="() => historyTarget = null">Cerrar</button></div>
+        @foreach (var item in history.Where(h => h.sede_id == historyTarget.id)) { <div class="history-item"><strong>@BogotaDate(item.fecha) · @item.usuario</strong><p>@item.tipo_evento: cámaras @item.estado_camaras_anterior → @item.estado_camaras_nuevo, alarma @item.estado_alarma_anterior → @item.estado_alarma_nuevo</p><small>@item.nota_nueva</small></div> }
+        @if (!history.Any(h => h.sede_id == historyTarget.id)) { <p>No hay eventos para esta sede.</p> }
+    </section></div>
+}
+
+@code {
+    private sealed record TabInfo(string Key, string Label, string Icon);
+    private static readonly TabInfo[] Tabs = [
+        new("resumen", "Resumen", "◫"), new("sedes", "Sedes", "⌂"), new("novedades", "Novedades", "!"),
+        new("historial", "Historial", "◷"), new("reportes", "Reportes", "▤"), new("admin", "Administración", "⚙")
+    ];
+    private List<SedeView> sedes = [];
+    private List<HistoryRow> history = [];
+    private List<AdminUser> users = [];
+    private StatsView stats = new();
+    private AdminUser? user;
+    private SedeView? editTarget;
+    private SedeView? historyTarget;
+    private string currentTab = "resumen", search = "", selectedGroup = "TODOS", statusFilter = "todas", sortBy = "prioridad";
+    private string loginEmail = "", loginPassword = "", editCameras = "operativo", editAlarm = "operativo", editNote = "";
+    private string newName = "", newGroup = "", bulkNote = "";
+    private string newUserName = "", newUserEmail = "", newUserPassword = "", newUserRole = "admin";
+    private string editName = "", editGroup = "", currentPassword = "", newPassword = "";
+    private bool loading = true, loginOpen, showSedeForm, showBulk, showArchived;
+    private string? error, notice;
+    private Dictionary<string, bool> bulkSelected = [];
+    private Dictionary<string, string> bulkCameras = [], bulkAlarms = [];
+    private readonly CancellationTokenSource refreshCancellation = new();
+
+    private IEnumerable<string> Groups => sedes.Select(s => s.grupo).Distinct().Order(StringComparer.OrdinalIgnoreCase);
+    private int IssueCount => sedes.Count(s => s.tiene_novedad || s.tiene_desactivado);
+    private string TabTitle => Tabs.First(t => t.Key == currentTab).Label;
+    private IEnumerable<SedeView> visibleSedes => FilterSedes();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        _ = RefreshLoop(refreshCancellation.Token);
+    }
+
+    private async Task RefreshLoop(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(cancellationToken))
+                await InvokeAsync(LoadData);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { }
+    }
+
+    private async Task LoadData()
+    {
+        loading = true;
+        error = null;
+        try
+        {
+            sedes = Store.GetSedes(showArchived);
+            stats = Store.GetStats();
+            history = Store.GetHistory(null, 100).historial;
+            users = user is null ? [] : Store.GetUsers();
+        }
+        catch (Exception ex) { error = ex.Message; }
+        finally { loading = false; }
+    }
+
+    private IEnumerable<SedeView> FilterSedes()
+    {
+        var q = sedes.AsEnumerable();
+        if (currentTab == "novedades") q = q.Where(s => s.tiene_novedad || s.tiene_desactivado);
+        if (!string.IsNullOrWhiteSpace(search)) q = q.Where(s => $"{s.nombre} {s.grupo} {s.nota}".Contains(search, StringComparison.OrdinalIgnoreCase));
+        if (selectedGroup != "TODOS") q = q.Where(s => s.grupo == selectedGroup);
+        q = statusFilter switch {
+            "operativas" => q.Where(s => s.es_100_operativa),
+            "novedad" => q.Where(s => s.tiene_novedad),
+            "desactivadas" => q.Where(s => s.tiene_desactivado),
+            _ => q
+        };
+        return sortBy switch {
+            "alfabetico" => q.OrderBy(s => s.nombre),
+            "revision" => q.OrderBy(s => DateTime.TryParse(s.fecha_revision, out var d) ? d : DateTime.MinValue),
+            _ => q.OrderByDescending(s => s.tiene_desactivado).ThenByDescending(s => s.tiene_novedad).ThenBy(s => s.nombre)
+        };
+    }
+
+    private void SelectTab(string tab) => currentTab = tab;
+    private async Task Login()
+    {
+        try { user = Store.Login(loginEmail, loginPassword); loginOpen = false; loginPassword = ""; notice = "Sesión iniciada."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task LoginOnEnter(KeyboardEventArgs e) { if (e.Key == "Enter") await Login(); }
+    private void Logout() { user = null; currentTab = currentTab == "admin" ? "resumen" : currentTab; notice = "Sesión cerrada."; }
+    private void Print() => _ = JS.InvokeVoidAsync("window.print");
+    private void OpenHistory(SedeView sede) => historyTarget = sede;
+    private void EditSedeStatus(SedeView sede) { editTarget = sede; editCameras = sede.estado_camaras; editAlarm = sede.estado_alarma; editNote = sede.nota; editName = sede.nombre; editGroup = sede.grupo; }
+    private void CloseEdit() => editTarget = null;
+    private async Task SaveStatus()
+    {
+        if (editTarget is null || user is null) return;
+        try { Store.UpdateSede(editTarget.id, editName, editGroup, null, null); Store.UpdateStatus(editTarget.id, editCameras, editAlarm, editNote, null, user); editTarget = null; notice = "Sede y estado actualizados."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task MarkOperational(SedeView sede)
+    {
+        if (user is null) return;
+        try { Store.MarkOperational(sede.id, user); notice = $"{sede.nombre} marcada como operativa."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task CreateSede()
+    {
+        if (user is null) return;
+        try { Store.CreateSede(newName, newGroup, user); newName = newGroup = ""; notice = "Sede creada."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task ToggleArchive(SedeView sede)
+    {
+        if (user is null) return;
+        try { Store.ToggleArchive(sede.id, user); notice = "Estado de archivo actualizado."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task CreateAdmin()
+    {
+        if (user is null) return;
+        try { Store.CreateUser(newUserEmail, newUserName, newUserPassword, newUserRole); newUserName = newUserEmail = newUserPassword = ""; notice = "Administrador creado."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task ChangePassword()
+    {
+        if (user is null) return;
+        try { Store.ChangePassword(user.id, currentPassword, newPassword); currentPassword = newPassword = ""; notice = "Contraseña actualizada."; }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task DeletePermanent(SedeView sede)
+    {
+        if (user is null || !await JS.InvokeAsync<bool>("confirm", $"¿Eliminar permanentemente la sede {sede.nombre}?")) return;
+        try { Store.DeleteSede(sede.id, user); notice = "Sede eliminada permanentemente."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task ResetDefaults()
+    {
+        if (user is null || !await JS.InvokeAsync<bool>("confirm", "¿Restablecer estados y reactivar las sedes archivadas? Se conservarán la lista de sedes y las cuentas de administrador.")) return;
+        try { Store.ResetDefaults(); notice = "Estados restablecidos; las sedes archivadas se reactivaron."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private void OpenBulkReview()
+    {
+        bulkSelected = sedes.Where(s => s.activa).ToDictionary(s => s.id, _ => false);
+        bulkCameras = sedes.Where(s => s.activa).ToDictionary(s => s.id, s => s.estado_camaras);
+        bulkAlarms = sedes.Where(s => s.activa).ToDictionary(s => s.id, s => s.estado_alarma);
+        bulkNote = ""; showBulk = true;
+    }
+    private async Task SaveBulk()
+    {
+        if (user is null) return;
+        var updates = bulkSelected.Where(x => x.Value).Select(x => new BulkUpdate(x.Key, bulkCameras[x.Key], bulkAlarms[x.Key], bulkNote)).ToList();
+        try { var count = Store.BulkUpdate(updates, user); showBulk = false; notice = $"{count} sedes actualizadas."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
+    private async Task ExportSedes() => await JS.InvokeVoidAsync("downloadFile", "sedes.csv", Store.ExportSedesCsv());
+    private async Task ExportHistory() => await JS.InvokeVoidAsync("downloadFile", "historial.csv", Store.ExportHistoryCsv());
+    private string StatusClass(SedeView s) => s.tiene_desactivado ? "red" : s.tiene_novedad ? "amber" : "green";
+    private string GlobalStatus(SedeView s) => s.tiene_desactivado ? "Desactivado" : s.tiene_novedad ? "Con novedad" : "Operativo";
+    private static string StatusText(string value) => value switch { "operativo" => "OPERATIVO", "desactivado" => "DESACTIVADO", "novedad" => "NOVEDAD", _ => value.ToUpperInvariant() };
+    private async Task ToggleArchived() { showArchived = !showArchived; currentTab = "sedes"; await LoadData(); }
+    private void OpenSedeManagement() { showSedeForm = true; currentTab = "sedes"; }
+    private static string BogotaDate(string value) => DateTime.TryParse(value, out var date) ? TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, "SA Pacific Standard Time").ToString("dd/MM/yyyy HH:mm") : value;
+    private static string BogotaTime() => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "SA Pacific Standard Time").ToString("HH:mm") + " COL";
+    public void Dispose() { refreshCancellation.Cancel(); refreshCancellation.Dispose(); }
+}
