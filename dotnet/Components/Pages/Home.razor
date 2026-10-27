@@ -12,7 +12,10 @@
         <nav>
             @foreach (var tab in Tabs)
             {
-                <button class="nav-link @(currentTab == tab.Key ? "selected" : "")" @onclick="() => SelectTab(tab.Key)">
+                <button class="nav-link @(currentTab == tab.Key ? "selected" : "")"
+                        disabled="@(tab.Key == "admin" && user is null)"
+                        title="@(tab.Key == "admin" && user is null ? "Inicia sesión para acceder a Administración" : null)"
+                        @onclick="() => SelectTab(tab.Key)">
                     <span>@tab.Icon</span>@tab.Label
                     @if (tab.Key == "novedades" && IssueCount > 0) { <b class="nav-count">@IssueCount</b> }
                 </button>
@@ -67,8 +70,8 @@
                 <section class="admin-banner">
                     <div><strong>Modo administrador activo</strong><span>@user.email</span></div>
                     <div class="toolbar">
-                        <button class="button light" @onclick="OpenBulkReview">Pase de guardia</button>
-                        <button class="button light" @onclick="OpenSedeManagement">Gestión de sedes</button>
+                        <button class="button light" @onclick="OpenBulkReview">Gestionar</button>
+                        <button class="button light" @onclick="OpenSedeManagement">Modificar</button>
                     </div>
                 </section>
             }
@@ -77,7 +80,7 @@
             {
                 <section class="stats-grid">
                     <StatCard Label="Sedes activas" Value="@stats.total_sedes" Tone="blue" />
-                    <StatCard Label="100% operativas" Value="@stats.operativas_100" Tone="green" />
+                    <StatCard Label="Cámaras operativas" Value="@stats.operativas_100" Tone="green" />
                     <StatCard Label="Con novedad" Value="@stats.con_novedad" Tone="amber" />
                     <StatCard Label="Desactivadas" Value="@stats.con_desactivado" Tone="red" />
                     <StatCard Label="Sin revisión (+4 días)" Value="@stats.desactualizadas" Tone="slate" />
@@ -88,7 +91,7 @@
             {
                 <section class="panel">
                     <div class="section-heading">
-                        <div><h2>@(currentTab == "novedades" ? "Novedades y alarmas activas" : "Sedes y puntos de atención")</h2><p>@visibleSedes.Count() sedes encontradas</p></div>
+                        <div><h2>@(currentTab == "novedades" ? "Novedades de cámaras" : "Sedes y puntos de atención")</h2><p>@visibleSedes.Count() sedes encontradas</p></div>
                         @if (user is not null) { <button class="button primary" @onclick="() => showSedeForm = !showSedeForm">+ Nueva sede</button> }
                     </div>
                     @if (showSedeForm && user is not null)
@@ -114,7 +117,7 @@
                             <article class="sede-card @(sede.tiene_desactivado ? "critical" : sede.tiene_novedad ? "warning" : "")">
                                 <div class="card-top"><span class="group-pill">@sede.grupo</span><span class="status-pill @StatusClass(sede)">@GlobalStatus(sede)</span></div>
                                 <h3>@sede.nombre</h3>
-                                <div class="system-status"><span>Cámaras <b class="@sede.estado_camaras">@StatusText(sede.estado_camaras)</b></span><span>Alarma <b class="@sede.estado_alarma">@StatusText(sede.estado_alarma)</b></span></div>
+                                <div class="system-status"><span>Cámaras <b class="@sede.estado_camaras">@StatusText(sede.estado_camaras)</b></span></div>
                                 @if (!string.IsNullOrWhiteSpace(sede.nota)) { <p class="note"><strong>Novedad:</strong> @sede.nota</p> }
                                 <div class="card-footer"><span>Revisión: @BogotaDate(sede.fecha_revision)</span><button class="text-button" @onclick="() => OpenHistory(sede)">Historial</button></div>
                                 @if (user is not null)
@@ -136,8 +139,8 @@
             {
                 <section class="panel">
                     <div class="section-heading"><div><h2>Historial de auditoría</h2><p>Eventos recientes del sistema</p></div></div>
-                    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Sede</th><th>Usuario</th><th>Evento</th><th>Cámaras</th><th>Alarma</th><th>Detalle</th></tr></thead>
-                    <tbody>@foreach (var h in history) { <tr><td>@BogotaDate(h.fecha)</td><td>@h.sede_nombre</td><td>@h.usuario</td><td>@h.tipo_evento</td><td>@h.estado_camaras_anterior → @h.estado_camaras_nuevo</td><td>@h.estado_alarma_anterior → @h.estado_alarma_nuevo</td><td>@h.nota_nueva</td></tr> }</tbody></table></div>
+                    <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Sede</th><th>Usuario</th><th>Evento</th><th>Cámaras</th><th>Detalle</th></tr></thead>
+                    <tbody>@foreach (var h in history) { <tr><td>@BogotaDate(h.fecha)</td><td>@h.sede_nombre</td><td>@h.usuario</td><td>@h.tipo_evento</td><td>@h.estado_camaras_anterior → @h.estado_camaras_nuevo</td><td>@h.nota_nueva</td></tr> }</tbody></table></div>
                 </section>
             }
 
@@ -148,31 +151,37 @@
                 </section>
             }
 
-            @if (currentTab == "admin")
+            @if (currentTab == "admin" && user is not null)
             {
                 <section class="panel"><h2>Panel de administración</h2><p>Gestión de administradores, sedes y revisión de seguridad.</p>
-                    <div class="report-actions"><button class="button primary" @onclick="OpenBulkReview">Pase de guardia masivo</button><button class="button secondary" @onclick="ToggleArchived">@(showArchived ? "Ocultar archivadas" : "Mostrar archivadas")</button><button class="button secondary" @onclick="ResetDefaults">Restablecer estados y sedes archivadas</button></div>
-                    @if (user is not null)
-                    {
-                        <div class="admin-users">
-                            <h3>Administradores</h3>
-                            @foreach (var admin in users) { <div class="user-row"><strong>@admin.nombre</strong><span>@admin.email</span><span class="group-pill">@admin.rol</span></div> }
-                            <h3>Crear administrador</h3>
-                            <div class="inline-form">
-                                <label>Nombre<input @bind="newUserName" /></label>
-                                <label>Correo<input type="email" @bind="newUserEmail" /></label>
-                                <label>Contraseña<input type="password" @bind="newUserPassword" /></label>
-                                <label>Rol<select @bind="newUserRole"><option value="admin">Administrador</option><option value="superadmin">Superadministrador</option></select></label>
+                    <div class="report-actions"><button class="button primary" @onclick="OpenBulkReview">Gestión masiva</button><button class="button secondary" @onclick="ToggleArchived">@(showArchived ? "Ocultar archivadas" : "Mostrar archivadas")</button><button class="button secondary" @onclick="ResetDefaults">Restablecer estados y sedes archivadas</button></div>
+                    <div class="admin-users">
+                        <h3>Administradores</h3>
+                        @foreach (var admin in users)
+                        {
+                            <div class="user-row">
+                                <strong>@admin.nombre</strong><span>@admin.email</span><span class="group-pill">@admin.rol</span>
+                                @if (user.rol == "superadmin" && admin.rol == "superadmin" && admin.id != user.id)
+                                {
+                                    <button class="button danger" @onclick="() => DeleteSuperAdmin(admin)">Eliminar</button>
+                                }
                             </div>
-                            <button class="button primary" @onclick="CreateAdmin">Crear administrador</button>
-                            <h3>Cambiar contraseña</h3>
-                            <div class="inline-form">
-                                <label>Contraseña actual<input type="password" @bind="currentPassword" /></label>
-                                <label>Nueva contraseña<input type="password" @bind="newPassword" /></label>
-                            </div>
-                            <button class="button secondary" @onclick="ChangePassword">Actualizar contraseña</button>
+                        }
+                        <h3>Crear administrador</h3>
+                        <div class="inline-form">
+                            <label>Nombre<input @bind="newUserName" /></label>
+                            <label>Correo<input type="email" @bind="newUserEmail" /></label>
+                            <label>Contraseña<input type="password" @bind="newUserPassword" /></label>
+                            <label>Rol<select @bind="newUserRole"><option value="admin">Administrador</option><option value="superadmin">Superadministrador</option></select></label>
                         </div>
-                    }
+                        <button class="button primary" @onclick="CreateAdmin">Crear administrador</button>
+                        <h3>Cambiar contraseña</h3>
+                        <div class="inline-form">
+                            <label>Contraseña actual<input type="password" @bind="currentPassword" /></label>
+                            <label>Nueva contraseña<input type="password" @bind="newPassword" /></label>
+                        </div>
+                        <button class="button secondary" @onclick="ChangePassword">Actualizar contraseña</button>
+                    </div>
                 </section>
             }
         }
@@ -185,10 +194,17 @@
         <div class="section-heading"><h2>Actualizar · @editTarget.nombre</h2><button class="text-button" @onclick="CloseEdit">Cerrar</button></div>
         <div class="form-grid">
             <label>Estado de cámaras<select @bind="editCameras"><option value="operativo">Operativo</option><option value="desactivado">Desactivado</option><option value="novedad">Con novedad</option></select></label>
-            <label>Estado de alarma<select @bind="editAlarm"><option value="operativo">Operativo</option><option value="desactivado">Desactivado</option><option value="novedad">Con novedad</option></select></label>
             <label>Nombre de sede<input @bind="editName" /></label>
             <label>Grupo<input @bind="editGroup" /></label>
-            <label class="wide">Nota / novedad<textarea @bind="editNote"></textarea></label>
+            @if (editCameras == "novedad")
+            {
+                <label class="wide">Novedad de cámaras
+                    <select @bind="editNote">
+                        <option value="">Selecciona una novedad</option>
+                        @foreach (var novelty in NeuroSecurityStore.NoveltyOptions) { <option value="@novelty">@novelty</option> }
+                    </select>
+                </label>
+            }
         </div>
         <div class="modal-actions"><button class="button secondary" @onclick="CloseEdit">Cancelar</button><button class="button primary" @onclick="SaveStatus">Guardar cambios</button></div>
     </section></div>
@@ -201,9 +217,17 @@
         <div class="bulk-list">@foreach (var sede in sedes.Where(s => s.activa)) {
             <div class="bulk-row"><label class="check-label"><input type="checkbox" @bind="bulkSelected[sede.id]" /> @sede.nombre</label>
             <select @bind="bulkCameras[sede.id]"><option value="operativo">Cámaras: operativo</option><option value="desactivado">Cámaras: desactivado</option><option value="novedad">Cámaras: novedad</option></select>
-            <select @bind="bulkAlarms[sede.id]"><option value="operativo">Alarma: operativo</option><option value="desactivado">Alarma: desactivado</option><option value="novedad">Alarma: novedad</option></select></div>
+            </div>
         }</div>
-        <label class="wide">Nota general<input @bind="bulkNote" /></label>
+        @if (HasSelectedNovelty)
+        {
+            <label class="wide">Novedad de cámaras
+                <select @bind="bulkNote">
+                    <option value="">Selecciona una novedad</option>
+                    @foreach (var novelty in NeuroSecurityStore.NoveltyOptions) { <option value="@novelty">@novelty</option> }
+                </select>
+            </label>
+        }
         <div class="modal-actions"><button class="button secondary" @onclick="() => showBulk = false">Cancelar</button><button class="button primary" @onclick="SaveBulk">Guardar revisión</button></div>
     </section></div>
 }
@@ -212,7 +236,7 @@
 {
     <div class="modal-backdrop"><section class="modal panel">
         <div class="section-heading"><h2>Historial · @historyTarget.nombre</h2><button class="text-button" @onclick="() => historyTarget = null">Cerrar</button></div>
-        @foreach (var item in history.Where(h => h.sede_id == historyTarget.id)) { <div class="history-item"><strong>@BogotaDate(item.fecha) · @item.usuario</strong><p>@item.tipo_evento: cámaras @item.estado_camaras_anterior → @item.estado_camaras_nuevo, alarma @item.estado_alarma_anterior → @item.estado_alarma_nuevo</p><small>@item.nota_nueva</small></div> }
+        @foreach (var item in history.Where(h => h.sede_id == historyTarget.id)) { <div class="history-item"><strong>@BogotaDate(item.fecha) · @item.usuario</strong><p>@item.tipo_evento: cámaras @item.estado_camaras_anterior → @item.estado_camaras_nuevo</p><small>@item.nota_nueva</small></div> }
         @if (!history.Any(h => h.sede_id == historyTarget.id)) { <p>No hay eventos para esta sede.</p> }
     </section></div>
 }
@@ -231,18 +255,19 @@
     private SedeView? editTarget;
     private SedeView? historyTarget;
     private string currentTab = "resumen", search = "", selectedGroup = "TODOS", statusFilter = "todas", sortBy = "prioridad";
-    private string loginEmail = "", loginPassword = "", editCameras = "operativo", editAlarm = "operativo", editNote = "";
+    private string loginEmail = "", loginPassword = "", editCameras = "operativo", editNote = "";
     private string newName = "", newGroup = "", bulkNote = "";
     private string newUserName = "", newUserEmail = "", newUserPassword = "", newUserRole = "admin";
     private string editName = "", editGroup = "", currentPassword = "", newPassword = "";
     private bool loading = true, loginOpen, showSedeForm, showBulk, showArchived;
     private string? error, notice;
     private Dictionary<string, bool> bulkSelected = [];
-    private Dictionary<string, string> bulkCameras = [], bulkAlarms = [];
+    private Dictionary<string, string> bulkCameras = [];
     private readonly CancellationTokenSource refreshCancellation = new();
 
     private IEnumerable<string> Groups => sedes.Select(s => s.grupo).Distinct().Order(StringComparer.OrdinalIgnoreCase);
     private int IssueCount => sedes.Count(s => s.tiene_novedad || s.tiene_desactivado);
+    private bool HasSelectedNovelty => bulkSelected.Any(x => x.Value && bulkCameras.TryGetValue(x.Key, out var state) && state == "novedad");
     private string TabTitle => Tabs.First(t => t.Key == currentTab).Label;
     private IEnumerable<SedeView> visibleSedes => FilterSedes();
 
@@ -297,7 +322,11 @@
         };
     }
 
-    private void SelectTab(string tab) => currentTab = tab;
+    private void SelectTab(string tab)
+    {
+        if (tab == "admin" && user is null) return;
+        currentTab = tab;
+    }
     private async Task Login()
     {
         try { user = Store.Login(loginEmail, loginPassword); loginOpen = false; loginPassword = ""; notice = "Sesión iniciada."; await LoadData(); }
@@ -307,12 +336,12 @@
     private void Logout() { user = null; currentTab = currentTab == "admin" ? "resumen" : currentTab; notice = "Sesión cerrada."; }
     private void Print() => _ = JS.InvokeVoidAsync("window.print");
     private void OpenHistory(SedeView sede) => historyTarget = sede;
-    private void EditSedeStatus(SedeView sede) { editTarget = sede; editCameras = sede.estado_camaras; editAlarm = sede.estado_alarma; editNote = sede.nota; editName = sede.nombre; editGroup = sede.grupo; }
+    private void EditSedeStatus(SedeView sede) { editTarget = sede; editCameras = sede.estado_camaras; editNote = sede.nota; editName = sede.nombre; editGroup = sede.grupo; }
     private void CloseEdit() => editTarget = null;
     private async Task SaveStatus()
     {
         if (editTarget is null || user is null) return;
-        try { Store.UpdateSede(editTarget.id, editName, editGroup, null, null); Store.UpdateStatus(editTarget.id, editCameras, editAlarm, editNote, null, user); editTarget = null; notice = "Sede y estado actualizados."; await LoadData(); }
+        try { Store.UpdateSede(editTarget.id, editName, editGroup, null, null); Store.UpdateStatus(editTarget.id, editCameras, editCameras == "novedad" ? editNote : "", null, user); editTarget = null; notice = "Sede y estado de cámaras actualizados."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task MarkOperational(SedeView sede)
@@ -339,6 +368,13 @@
         try { Store.CreateUser(newUserEmail, newUserName, newUserPassword, newUserRole); newUserName = newUserEmail = newUserPassword = ""; notice = "Administrador creado."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
+    private async Task DeleteSuperAdmin(AdminUser target)
+    {
+        if (user is null || user.rol != "superadmin" || target.rol != "superadmin" || target.id == user.id) return;
+        if (!await JS.InvokeAsync<bool>("confirm", $"¿Eliminar la cuenta de superadministrador {target.email}?")) return;
+        try { Store.DeleteSuperAdmin(target.id, user); notice = "Superadministrador eliminado."; await LoadData(); }
+        catch (Exception ex) { error = ex.Message; }
+    }
     private async Task ChangePassword()
     {
         if (user is null) return;
@@ -361,13 +397,13 @@
     {
         bulkSelected = sedes.Where(s => s.activa).ToDictionary(s => s.id, _ => false);
         bulkCameras = sedes.Where(s => s.activa).ToDictionary(s => s.id, s => s.estado_camaras);
-        bulkAlarms = sedes.Where(s => s.activa).ToDictionary(s => s.id, s => s.estado_alarma);
         bulkNote = ""; showBulk = true;
     }
     private async Task SaveBulk()
     {
         if (user is null) return;
-        var updates = bulkSelected.Where(x => x.Value).Select(x => new BulkUpdate(x.Key, bulkCameras[x.Key], bulkAlarms[x.Key], bulkNote)).ToList();
+        var updates = bulkSelected.Where(x => x.Value).Select(x => new BulkUpdate(
+            x.Key, bulkCameras[x.Key], bulkCameras[x.Key] == "novedad" ? bulkNote : "")).ToList();
         try { var count = Store.BulkUpdate(updates, user); showBulk = false; notice = $"{count} sedes actualizadas."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }

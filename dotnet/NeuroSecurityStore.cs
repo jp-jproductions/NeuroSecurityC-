@@ -124,6 +124,27 @@ public sealed class NeuroSecurityStore
         }
     }
 
+    public void DeleteSuperAdmin(string id, AdminUser actor)
+    {
+        lock (gate)
+        {
+            if (actor.rol != "superadmin")
+                throw new StoreException(403, "Solo un superadministrador puede eliminar a otro superadministrador.");
+            if (actor.id == id)
+                throw new StoreException(400, "No puedes eliminar tu propia cuenta.");
+
+            var user = database.usuarios.FirstOrDefault(u => u.id == id)
+                ?? throw new StoreException(404, "Administrador no encontrado.");
+            if (user.rol != "superadmin")
+                throw new StoreException(403, "Solo se pueden eliminar cuentas de superadministrador.");
+            if (database.usuarios.Count(u => u.rol == "superadmin") <= 1)
+                throw new StoreException(400, "No se puede eliminar al último superadministrador.");
+
+            database.usuarios.Remove(user);
+            Save();
+        }
+    }
+
     public void ChangePassword(string id, string currentPassword, string newPassword)
     {
         if (newPassword.Length < 6)
@@ -139,7 +160,7 @@ public sealed class NeuroSecurityStore
         }
     }
 
-    public SedeView UpdateStatus(string id, string? cameras, string? alarm, string? note, string? revision, AdminUser actor)
+    public SedeView UpdateStatus(string id, string? cameras, string? note, string? revision, AdminUser actor)
     {
         lock (gate)
         {
@@ -149,13 +170,12 @@ public sealed class NeuroSecurityStore
             {
                 sede_id = id,
                 estado_camaras = cameras ?? previous.estado_camaras,
-                estado_alarma = alarm ?? previous.estado_alarma,
                 nota = note?.Trim() ?? previous.nota,
                 fecha_revision = revision ?? UtcNow(),
                 actualizado_en = UtcNow(),
                 actualizado_por = actor.nombre
             };
-            ValidateState(next.estado_camaras, next.estado_alarma, next.nota);
+            ValidateState(next.estado_camaras, next.nota);
             database.estados[id] = next;
             AddHistory(sede, previous, next, actor.nombre, "actualizacion");
             Save();
@@ -171,7 +191,7 @@ public sealed class NeuroSecurityStore
             var previous = GetState(sede);
             var next = new StateRow
             {
-                sede_id = id, estado_camaras = "operativo", estado_alarma = "operativo",
+                sede_id = id, estado_camaras = "operativo",
                 nota = "", fecha_revision = UtcNow(), actualizado_en = UtcNow(), actualizado_por = actor.nombre
             };
             database.estados[id] = next;
@@ -192,11 +212,11 @@ public sealed class NeuroSecurityStore
                 var sede = database.sedes.FirstOrDefault(s => s.id == update.sede_id);
                 if (sede is null) continue;
                 var note = update.nota?.Trim() ?? "";
-                ValidateState(update.estado_camaras, update.estado_alarma, note, sede.nombre);
+                ValidateState(update.estado_camaras, note, sede.nombre);
                 var previous = GetState(sede);
                 var next = new StateRow
                 {
-                    sede_id = sede.id, estado_camaras = update.estado_camaras, estado_alarma = update.estado_alarma,
+                    sede_id = sede.id, estado_camaras = update.estado_camaras,
                     nota = note, fecha_revision = update.fecha_revision ?? revision ?? UtcNow(),
                     actualizado_en = UtcNow(), actualizado_por = actor.nombre
                 };
@@ -206,7 +226,7 @@ public sealed class NeuroSecurityStore
             foreach (var (sede, previous, next) in candidates)
             {
                 database.estados[sede.id] = next;
-                if (previous.estado_camaras != next.estado_camaras || previous.estado_alarma != next.estado_alarma || previous.nota != next.nota)
+                if (previous.estado_camaras != next.estado_camaras || previous.nota != next.nota)
                     AddHistory(sede, previous, next, actor.nombre, "masivo");
             }
             if (candidates.Count > 0) Save();
@@ -214,7 +234,7 @@ public sealed class NeuroSecurityStore
         }
     }
 
-    public SedeView CreateSede(string name, string? group, AdminUser actor, string cameras = "operativo", string alarm = "operativo", string note = "")
+    public SedeView CreateSede(string name, string? group, AdminUser actor, string cameras = "operativo", string note = "")
     {
         if (string.IsNullOrWhiteSpace(name)) throw new StoreException(400, "El nombre de la sede es obligatorio.");
         lock (gate)
@@ -228,10 +248,10 @@ public sealed class NeuroSecurityStore
             };
             var state = new StateRow
             {
-                sede_id = sede.id, estado_camaras = cameras, estado_alarma = alarm,
+                sede_id = sede.id, estado_camaras = cameras,
                 nota = note.Trim(), fecha_revision = now, actualizado_en = now, actualizado_por = actor.nombre
             };
-            ValidateState(state.estado_camaras, state.estado_alarma, state.nota);
+            ValidateState(state.estado_camaras, state.nota);
             database.sedes.Add(sede);
             database.estados[sede.id] = state;
             AddHistory(sede, DefaultState(sede.id), state, actor.nombre, "creacion", "Sede creada en el sistema");
@@ -288,7 +308,7 @@ public sealed class NeuroSecurityStore
                 sede.activa = true;
                 database.estados[sede.id] = new StateRow
                 {
-                    sede_id = sede.id, estado_camaras = "operativo", estado_alarma = "operativo", nota = "",
+                    sede_id = sede.id, estado_camaras = "operativo", nota = "",
                     fecha_revision = now, actualizado_en = now, actualizado_por = "Sistema"
                 };
             }
@@ -298,8 +318,7 @@ public sealed class NeuroSecurityStore
                 {
                     id = Guid.NewGuid().ToString("N"), sede_id = "todas", sede_nombre = "Todas las Sedes",
                     fecha = now, usuario = "Sistema", estado_camaras_anterior = "operativo",
-                    estado_camaras_nuevo = "operativo", estado_alarma_anterior = "operativo",
-                    estado_alarma_nuevo = "operativo", nota_anterior = "",
+                    estado_camaras_nuevo = "operativo", nota_anterior = "",
                     nota_nueva = "Carga inicial del sistema. Todas las sedes operativas.", tipo_evento = "creacion"
                 }
             ];
@@ -309,10 +328,10 @@ public sealed class NeuroSecurityStore
 
     public string ExportSedesCsv()
     {
-        var header = "ID;Sede;Grupo;Estado Cámaras;Estado Alarma;Nota / Novedad;Fecha Última Revisión;Días Sin Revisar;Desactualizada (>4 días);Última Modificación;Responsable";
+        var header = "ID;Sede;Grupo;Estado Cámaras;Nota / Novedad;Fecha Última Revisión;Días Sin Revisar;Desactualizada (>4 días);Última Modificación;Responsable";
         var rows = GetSedes().Select(s => string.Join(';', new[]
         {
-            Csv(s.id), Csv(s.nombre), Csv(s.grupo), Csv(s.estado_camaras.ToUpperInvariant()), Csv(s.estado_alarma.ToUpperInvariant()),
+            Csv(s.id), Csv(s.nombre), Csv(s.grupo), Csv(s.estado_camaras.ToUpperInvariant()),
             Csv(s.nota), Csv(s.fecha_revision), s.dias_sin_revision.ToString(), s.es_desactualizada ? "SÍ" : "NO",
             Csv(s.actualizado_en), Csv(s.actualizado_por)
         }));
@@ -321,11 +340,11 @@ public sealed class NeuroSecurityStore
 
     public string ExportHistoryCsv()
     {
-        var header = "Fecha Evento;Sede;Usuario Responsable;Tipo Evento;Cámaras Anterior;Cámaras Nuevo;Alarma Anterior;Alarma Nuevo;Nota Anterior;Nota Nueva";
+        var header = "Fecha Evento;Sede;Usuario Responsable;Tipo Evento;Cámaras Anterior;Cámaras Nuevo;Nota Anterior;Nota Nueva";
         var rows = GetHistory(null, 1000).historial.Select(h => string.Join(';', new[]
         {
             Csv(h.fecha), Csv(h.sede_nombre), Csv(h.usuario), Csv(h.tipo_evento), Csv(h.estado_camaras_anterior),
-            Csv(h.estado_camaras_nuevo), Csv(h.estado_alarma_anterior), Csv(h.estado_alarma_nuevo), Csv(h.nota_anterior), Csv(h.nota_nueva)
+            Csv(h.estado_camaras_nuevo), Csv(h.nota_anterior), Csv(h.nota_nueva)
         }));
         return "\uFEFF" + string.Join("\r\n", new[] { header }.Concat(rows));
     }
@@ -338,12 +357,12 @@ public sealed class NeuroSecurityStore
         return new SedeView
         {
             id = sede.id, nombre = sede.nombre, grupo = sede.grupo, activa = sede.activa, orden = sede.orden,
-            creada_en = sede.creada_en, estado_camaras = state.estado_camaras, estado_alarma = state.estado_alarma,
+            creada_en = sede.creada_en, estado_camaras = state.estado_camaras,
             nota = state.nota, fecha_revision = state.fecha_revision, actualizado_en = state.actualizado_en,
             actualizado_por = state.actualizado_por, dias_sin_revision = Math.Max(0, (int)Math.Floor(hours / 24)),
-            es_desactualizada = hours > 96, es_100_operativa = state.estado_camaras == "operativo" && state.estado_alarma == "operativo",
-            tiene_novedad = state.estado_camaras == "novedad" || state.estado_alarma == "novedad",
-            tiene_desactivado = state.estado_camaras == "desactivado" || state.estado_alarma == "desactivado"
+            es_desactualizada = hours > 96, es_100_operativa = state.estado_camaras == "operativo",
+            tiene_novedad = state.estado_camaras == "novedad",
+            tiene_desactivado = state.estado_camaras == "desactivado"
         };
     }
 
@@ -359,7 +378,6 @@ public sealed class NeuroSecurityStore
         {
             id = Guid.NewGuid().ToString("N"), sede_id = sede.id, sede_nombre = sede.nombre, fecha = UtcNow(), usuario = actor,
             estado_camaras_anterior = previous.estado_camaras, estado_camaras_nuevo = next.estado_camaras,
-            estado_alarma_anterior = previous.estado_alarma, estado_alarma_nuevo = next.estado_alarma,
             nota_anterior = previous.nota, nota_nueva = newNote ?? next.nota, tipo_evento = type
         });
     }
@@ -370,7 +388,6 @@ public sealed class NeuroSecurityStore
         {
             id = Guid.NewGuid().ToString("N"), sede_id = sede.id, sede_nombre = sede.nombre, fecha = UtcNow(),
             usuario = actor.nombre, estado_camaras_anterior = "", estado_camaras_nuevo = "",
-            estado_alarma_anterior = "", estado_alarma_nuevo = "",
             nota_nueva = permanent ? $"Sede eliminada permanentemente por {actor.nombre}" : $"Sede {(sede.activa ? "archivada" : "reactivada")} por {actor.nombre}",
             tipo_evento = permanent ? "eliminacion" : "actualizacion"
         });
@@ -383,18 +400,18 @@ public sealed class NeuroSecurityStore
 
     private static StateRow DefaultState(string id) => new()
     {
-        sede_id = id, estado_camaras = "operativo", estado_alarma = "operativo", nota = "",
+        sede_id = id, estado_camaras = "operativo", nota = "",
         fecha_revision = UtcNow(), actualizado_en = UtcNow(), actualizado_por = "Sistema"
     };
 
-    private static void ValidateState(string cameras, string alarm, string note, string? locationName = null)
+    private static void ValidateState(string cameras, string note, string? locationName = null)
     {
-        if (!ValidStates.Contains(cameras) || !ValidStates.Contains(alarm))
+        if (!ValidStates.Contains(cameras))
             throw new StoreException(400, locationName is null ? "Estado inválido." : $"Estado inválido para la sede \"{locationName}\".");
-        if ((cameras == "novedad" || alarm == "novedad") && string.IsNullOrWhiteSpace(note))
+        if (cameras == "novedad" && !ValidNoveltyReasons.Contains(note))
             throw new StoreException(400, locationName is null
-                ? "El estado \"Con novedad\" exige escribir una nota explicativa."
-                : $"La sede \"{locationName}\" está \"Con novedad\" y requiere nota explicativa.");
+                ? "Selecciona una novedad válida para las cámaras."
+                : $"Selecciona una novedad válida para las cámaras de la sede \"{locationName}\".");
     }
 
     private void Save()
@@ -426,6 +443,16 @@ public sealed class NeuroSecurityStore
     private static string Csv(string? value) => $"\"{(value ?? "").Replace("\"", "\"\"")}\"";
     private static string UtcNow() => DateTime.UtcNow.ToString("O");
     private static readonly HashSet<string> ValidStates = ["operativo", "desactivado", "novedad"];
+    public static IReadOnlyList<string> NoveltyOptions { get; } = Array.AsReadOnly(new[]
+    {
+        "No conecta por fallo de internet.",
+        "No conecta por falta de energía.",
+        "Falla de DVR",
+        "Falla de disco duro",
+        "Cambio de horario por pila desgastada.",
+        "Cámara sin funcionamiento."
+    });
+    private static readonly HashSet<string> ValidNoveltyReasons = new(NoveltyOptions, StringComparer.Ordinal);
 }
 
 public sealed class StoreException(int statusCode, string message) : Exception(message)
@@ -455,7 +482,6 @@ public sealed class StateRow
 {
     public string sede_id { get; set; } = "";
     public string estado_camaras { get; set; } = "operativo";
-    public string estado_alarma { get; set; } = "operativo";
     public string nota { get; set; } = "";
     public string fecha_revision { get; set; } = "";
     public string actualizado_en { get; set; } = "";
@@ -471,8 +497,6 @@ public sealed class HistoryRow
     public string usuario { get; set; } = "";
     public string estado_camaras_anterior { get; set; } = "";
     public string estado_camaras_nuevo { get; set; } = "";
-    public string estado_alarma_anterior { get; set; } = "";
-    public string estado_alarma_nuevo { get; set; } = "";
     public string? nota_anterior { get; set; }
     public string? nota_nueva { get; set; }
     public string tipo_evento { get; set; } = "";
@@ -491,7 +515,6 @@ public sealed class UserRow
 public sealed class SedeView : SedeRow
 {
     public string estado_camaras { get; set; } = "operativo";
-    public string estado_alarma { get; set; } = "operativo";
     public string nota { get; set; } = "";
     public string fecha_revision { get; set; } = "";
     public string actualizado_en { get; set; } = "";
@@ -522,14 +545,14 @@ public sealed class AdminUser
     public string creado_en { get; set; } = "";
 }
 
-public sealed record BulkUpdate(string sede_id, string estado_camaras, string estado_alarma, string? nota = null, string? fecha_revision = null);
+public sealed record BulkUpdate(string sede_id, string estado_camaras, string? nota = null, string? fecha_revision = null);
 
 public sealed record LoginRequest(string email, string password);
 public sealed record ChangePasswordRequest(
     [property: JsonPropertyName("currentPassword")] string currentPassword,
     [property: JsonPropertyName("newPassword")] string newPassword);
 public sealed record CreateUserRequest(string email, string nombre, string password, string rol);
-public sealed record UpdateStatusRequest(string? estado_camaras, string? estado_alarma, string? nota, string? fecha_revision);
+public sealed record UpdateStatusRequest(string? estado_camaras, string? nota, string? fecha_revision);
 public sealed record BulkUpdateRequest(List<BulkUpdate> updates, string? fecha_revision_general);
-public sealed record CreateSedeRequest(string nombre, string? grupo, string? estado_camaras, string? estado_alarma, string? nota);
+public sealed record CreateSedeRequest(string nombre, string? grupo, string? estado_camaras, string? nota);
 public sealed record EditSedeRequest(string? nombre, string? grupo, bool? activa, int? orden);

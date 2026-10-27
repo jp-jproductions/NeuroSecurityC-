@@ -27,7 +27,7 @@
     {
       "id": "sede-4",
       "nombre": "DROGUERIA MEDICAL TOWER",
-      "grupo": "DROGUERÍAS Y FARMA",
+      "grupo": "DROGUER\u00CDAS Y FARMA",
       "activa": true,
       "orden": 4,
       "creada_en": "2026-10-26T01:15:29.656Z"
@@ -35,7 +35,7 @@
     {
       "id": "sede-5",
       "nombre": "FARMA NORTE",
-      "grupo": "DROGUERÍAS Y FARMA",
+      "grupo": "DROGUER\u00CDAS Y FARMA",
       "activa": true,
       "orden": 5,
       "creada_en": "2026-10-26T01:15:29.656Z"
@@ -43,7 +43,7 @@
     {
       "id": "sede-6",
       "nombre": "FARMA SUR",
-      "grupo": "DROGUERÍAS Y FARMA",
+      "grupo": "DROGUER\u00CDAS Y FARMA",
       "activa": true,
       "orden": 6,
       "creada_en": "2026-10-26T01:15:29.656Z"
@@ -51,7 +51,7 @@
     {
       "id": "sede-7",
       "nombre": "FARMA MANIZALES",
-      "grupo": "DROGUERÍAS Y FARMA",
+      "grupo": "DROGUER\u00CDAS Y FARMA",
       "activa": true,
       "orden": 7,
       "creada_en": "2026-10-26T01:15:29.656Z"
@@ -413,16 +413,14 @@
     "sede-1": {
       "sede_id": "sede-1",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
-      "fecha_revision": "2026-10-26T03:47:13.540Z",
-      "actualizado_en": "2026-10-26T03:47:13.540Z",
+      "fecha_revision": "2026-10-27T20:17:42.4488178Z",
+      "actualizado_en": "2026-10-27T20:17:42.4488218Z",
       "actualizado_por": "Administrador de Seguridad"
     },
     "sede-2": {
       "sede_id": "sede-2",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -431,7 +429,6 @@
     "sede-3": {
       "sede_id": "sede-3",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -440,7 +437,6 @@
     "sede-4": {
       "sede_id": "sede-4",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -449,7 +445,6 @@
     "sede-5": {
       "sede_id": "sede-5",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -458,7 +453,6 @@
     "sede-6": {
       "sede_id": "sede-6",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -467,7 +461,6 @@
     "sede-7": {
       "sede_id": "sede-7",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -476,7 +469,6 @@
     "sede-8": {
       "sede_id": "sede-8",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -485,7 +477,6 @@
     "sede-9": {
       "sede_id": "sede-9",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -494,7 +485,6 @@
     "sede-10": {
       "sede_id": "sede-10",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -503,7 +493,6 @@
     "sede-11": {
       "sede_id": "sede-11",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -512,7 +501,6 @@
     "sede-12": {
       "sede_id": "sede-12",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -521,7 +509,6 @@
     "sede-13": {
       "sede_id": "sede-13",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -530,7 +517,6 @@
     "sede-14": {
       "sede_id": "sede-14",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -539,7 +525,6 @@
     "sede-15": {
       "sede_id": "sede-15",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -548,7 +533,6 @@
     "sede-16": {
       "sede_id": "sede-16",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -557,7 +541,6 @@
     "sede-17": {
       "sede_id": "sede-17",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -566,7 +549,6 @@
     "sede-18": {
       "sede_id": "sede-18",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -575,7 +557,6 @@
     "sede-19": {
       "sede_id": "sede-19",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -584,7 +565,6 @@
     "sede-20": {
       "sede_id": "sede-20",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -593,7 +573,6 @@
     "sede-21": {
       "sede_id": "sede-21",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -602,7 +581,6 @@
     "sede-22": {
       "sede_id": "sede-22",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -611,7 +589,6 @@
     "sede-23": {
       "sede_id": "sede-23",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -620,7 +597,6 @@
     "sede-24": {
       "sede_id": "sede-24",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -629,7 +605,6 @@
     "sede-25": {
       "sede_id": "sede-25",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -638,7 +613,6 @@
     "sede-26": {
       "sede_id": "sede-26",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -647,7 +621,6 @@
     "sede-27": {
       "sede_id": "sede-27",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -656,7 +629,6 @@
     "sede-28": {
       "sede_id": "sede-28",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -665,7 +637,6 @@
     "sede-29": {
       "sede_id": "sede-29",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -674,7 +645,6 @@
     "sede-30": {
       "sede_id": "sede-30",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -683,7 +653,6 @@
     "sede-31": {
       "sede_id": "sede-31",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -692,7 +661,6 @@
     "sede-32": {
       "sede_id": "sede-32",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -701,7 +669,6 @@
     "sede-33": {
       "sede_id": "sede-33",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -710,7 +677,6 @@
     "sede-34": {
       "sede_id": "sede-34",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -719,7 +685,6 @@
     "sede-35": {
       "sede_id": "sede-35",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -728,7 +693,6 @@
     "sede-36": {
       "sede_id": "sede-36",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -737,7 +701,6 @@
     "sede-37": {
       "sede_id": "sede-37",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -746,7 +709,6 @@
     "sede-38": {
       "sede_id": "sede-38",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -755,7 +717,6 @@
     "sede-39": {
       "sede_id": "sede-39",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -764,7 +725,6 @@
     "sede-40": {
       "sede_id": "sede-40",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -773,7 +733,6 @@
     "sede-41": {
       "sede_id": "sede-41",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -782,7 +741,6 @@
     "sede-42": {
       "sede_id": "sede-42",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -791,7 +749,6 @@
     "sede-43": {
       "sede_id": "sede-43",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -800,7 +757,6 @@
     "sede-44": {
       "sede_id": "sede-44",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -809,7 +765,6 @@
     "sede-45": {
       "sede_id": "sede-45",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -818,7 +773,6 @@
     "sede-46": {
       "sede_id": "sede-46",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -827,7 +781,6 @@
     "sede-47": {
       "sede_id": "sede-47",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -836,7 +789,6 @@
     "sede-48": {
       "sede_id": "sede-48",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -845,7 +797,6 @@
     "sede-49": {
       "sede_id": "sede-49",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -854,7 +805,6 @@
     "sede-50": {
       "sede_id": "sede-50",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -863,7 +813,6 @@
     "sede-51": {
       "sede_id": "sede-51",
       "estado_camaras": "operativo",
-      "estado_alarma": "operativo",
       "nota": "",
       "fecha_revision": "2026-10-26T01:15:29.656Z",
       "actualizado_en": "2026-10-26T01:15:29.656Z",
@@ -879,8 +828,6 @@
       "usuario": "Administrador de Seguridad",
       "estado_camaras_anterior": "operativo",
       "estado_camaras_nuevo": "operativo",
-      "estado_alarma_anterior": "operativo",
-      "estado_alarma_nuevo": "operativo",
       "nota_anterior": "",
       "nota_nueva": "",
       "tipo_evento": "actualizacion"
@@ -893,8 +840,6 @@
       "usuario": "Sistema",
       "estado_camaras_anterior": "operativo",
       "estado_camaras_nuevo": "operativo",
-      "estado_alarma_anterior": "operativo",
-      "estado_alarma_nuevo": "operativo",
       "nota_anterior": "",
       "nota_nueva": "Carga inicial del sistema. Todas las sedes operativas.",
       "tipo_evento": "creacion"
@@ -907,9 +852,31 @@
       "usuario": "Administrador de Seguridad",
       "estado_camaras_anterior": "operativo",
       "estado_camaras_nuevo": "operativo",
-      "estado_alarma_anterior": "operativo",
-      "estado_alarma_nuevo": "operativo",
       "nota_anterior": "",
+      "nota_nueva": "",
+      "tipo_evento": "actualizacion"
+    },
+    {
+      "id": "4589ca8d8e1a41bbb406ec2f331997ee",
+      "sede_id": "sede-1",
+      "sede_nombre": "CEDI",
+      "fecha": "2026-10-27T20:17:24.1486869Z",
+      "usuario": "Administrador de Seguridad",
+      "estado_camaras_anterior": "operativo",
+      "estado_camaras_nuevo": "novedad",
+      "nota_anterior": "",
+      "nota_nueva": "No conecta por fallo de internet.",
+      "tipo_evento": "masivo"
+    },
+    {
+      "id": "9ad8550930ba4bae88ba9debd663b90a",
+      "sede_id": "sede-1",
+      "sede_nombre": "CEDI",
+      "fecha": "2026-10-27T20:17:42.4488400Z",
+      "usuario": "Administrador de Seguridad",
+      "estado_camaras_anterior": "novedad",
+      "estado_camaras_nuevo": "operativo",
+      "nota_anterior": "No conecta por fallo de internet.",
       "nota_nueva": "",
       "tipo_evento": "actualizacion"
     }
@@ -924,20 +891,12 @@
       "creado_en": "2026-10-26T01:15:29.656Z"
     },
     {
-      "id": "admin-1",
-      "email": "admin@neuromedica.com",
-      "nombre": "Administrador de Seguridad",
+      "id": "admin-ebca6c174cd14f3aaf544be8989df2d5",
+      "email": "admin@neuromedica.com.co",
+      "nombre": "Desarrollador",
       "password_hash": "edf53735a0382444ed6df3677bac7b461e98aac44594056767cf52440a5b98985d643319b8dd15c0c38a2732f6cd1c4d3dc63aa023e966cc6bc521efac723d47",
       "rol": "superadmin",
-      "creado_en": "2026-10-26T01:15:29.656Z"
-    },
-    {
-      "id": "admin-jupaesra",
-      "email": "jupaesra170504@gmail.com",
-      "nombre": "Superadministrador",
-      "password_hash": "edf53735a0382444ed6df3677bac7b461e98aac44594056767cf52440a5b98985d643319b8dd15c0c38a2732f6cd1c4d3dc63aa023e966cc6bc521efac723d47",
-      "rol": "superadmin",
-      "creado_en": "2026-10-26T01:15:29.656Z"
+      "creado_en": "2026-10-27T20:32:35.3216326Z"
     }
   ]
 }

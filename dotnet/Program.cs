@@ -96,10 +96,16 @@ admin.MapPost("/users", (CreateUserRequest request, NeuroSecurityStore store) =>
     var user = store.CreateUser(request.email, request.nombre, request.password, request.rol);
     return Results.Json(new { message = "Administrador creado con éxito", user }, statusCode: StatusCodes.Status201Created);
 });
+admin.MapDelete("/users/{id}", (string id, HttpContext context, NeuroSecurityStore store) =>
+{
+    var actor = (AdminUser)context.Items["admin-user"]!;
+    store.DeleteSuperAdmin(id, actor);
+    return Results.Ok(new { message = "Superadministrador eliminado correctamente." });
+});
 admin.MapPut("/sedes/{id}/status", (string id, UpdateStatusRequest request, HttpContext context, NeuroSecurityStore store) =>
 {
     var user = (AdminUser)context.Items["admin-user"]!;
-    var sede = store.UpdateStatus(id, request.estado_camaras, request.estado_alarma, request.nota, request.fecha_revision, user);
+    var sede = store.UpdateStatus(id, request.estado_camaras, request.nota, request.fecha_revision, user);
     return Results.Ok(new { message = "Estado actualizado correctamente", sede });
 });
 admin.MapPost("/sedes/{id}/mark-operational", (string id, HttpContext context, NeuroSecurityStore store) =>
@@ -118,7 +124,7 @@ admin.MapPost("/sedes", (CreateSedeRequest request, HttpContext context, NeuroSe
 {
     var user = (AdminUser)context.Items["admin-user"]!;
     var sede = store.CreateSede(request.nombre, request.grupo, user,
-        request.estado_camaras ?? "operativo", request.estado_alarma ?? "operativo", request.nota ?? "");
+        request.estado_camaras ?? "operativo", request.nota ?? "");
     return Results.Json(new { message = "Sede creada exitosamente.", sede }, statusCode: StatusCodes.Status201Created);
 });
 admin.MapPut("/sedes/{id}", (string id, EditSedeRequest request, NeuroSecurityStore store) =>

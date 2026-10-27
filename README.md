@@ -29,6 +29,9 @@ La aplicación muestra la URL local al iniciar. En producción, `JWT_SECRET` es 
 - Historial de auditoría, impresión y exportaciones CSV.
 - Inicio de sesión administrativo, actualización de estados y revisión masiva.
 - Gestión de sedes y cuentas administradoras.
+- Solo un superadministrador puede eliminar la cuenta de otro superadministrador; no puede eliminarse a sí mismo ni al último superadministrador.
+
+Al marcar las cámaras «Con novedad», se debe seleccionar una opción: No conecta por fallo de internet; No conecta por falta de energía; Falla de DVR; Falla de disco duro; Cambio de horario por pila desgastada; o Cámara sin funcionamiento.
 
 ## Estructura
 
