@@ -15,7 +15,7 @@ $env:JWT_SECRET = "configure-un-secreto-largo-y-aleatorio"
 dotnet run --project dotnet\dotnet.csproj
 ```
 
-La aplicación muestra la URL local al iniciar. En producción, `JWT_SECRET` es obligatorio.
+La aplicación muestra la URL local al iniciar.
 
 ## Datos y configuración
 
