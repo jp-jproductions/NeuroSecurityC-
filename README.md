@@ -36,20 +36,20 @@ Al marcar las cámaras «Con novedad», se debe seleccionar una opción: No cone
 
 ## Despliegue en Vercel
 
-El proyecto incluye `Dockerfile.vercel`, que publica la aplicación ASP.NET Core en un contenedor. Vercel ofrece su Container Runtime en beta y admite WebSockets en beta, necesarios para la interactividad de Blazor Server. Revisa las [limitaciones del Container Runtime](https://vercel.com/docs/functions/runtimes/container) y la [guía de WebSockets](https://vercel.com/kb/guide/do-vercel-serverless-functions-support-websocket-connections).
+El proyecto incluye un `Dockerfile` en la raíz, que publica la aplicación ASP.NET Core como contenedor. Vercel ofrece su Container Runtime en beta y admite WebSockets en beta, necesarios para la interactividad de Blazor Server. Revisa las [limitaciones del Container Runtime](https://vercel.com/docs/functions/runtimes/container) y la [guía de WebSockets](https://vercel.com/kb/guide/do-vercel-serverless-functions-support-websocket-connections).
 
 1. Importa el repositorio en Vercel y configura **Root Directory** como la raíz del repositorio (`.`), no `dotnet/`; el contenedor necesita tanto `dotnet/` como `data/db.json`.
-2. Selecciona el framework **Container**. Vercel detecta `Dockerfile.vercel`; también puedes seleccionarlo con `vercel project update --framework container --yes`.
+2. Selecciona el framework **Container**. Vercel debe detectar el `Dockerfile` de la raíz; también puedes seleccionarlo con `vercel project update --framework container --yes`.
 3. Crea una base de datos PostgreSQL en Neon y copia su cadena de conexión **pooled**. Añádela como variable `DATABASE_URL` para los entornos que vayas a desplegar.
 4. Añade `JWT_SECRET` como variable secreta de Vercel. Usa un secreto largo, aleatorio y único para producción; no uses el ejemplo de desarrollo.
 5. Habilita **Fluid Compute / WebSockets** en la configuración de Functions del proyecto si aún no está activo y despliega. Blazor se reconecta si Vercel termina una conexión por sus límites de duración.
 
-La primera ejecución en una base Neon vacía crea la tabla `neurosecurity_state` y carga allí el contenido inicial de `data/db.json`. Los cambios posteriores quedan guardados en PostgreSQL, no en el sistema de archivos temporal del contenedor. Configura las variables de producción y preview según corresponda.
+La primera ejecución en una base Neon vacía crea la tabla `neurosecurity_state` y carga allí el contenido inicial de `data/db.json`. Los cambios posteriores quedan guardados en PostgreSQL, no en el sistema de archivos temporal del contenedor. Configura las variables de producción y preview según corresponda. Después de subir cambios al repositorio, verifica que Vercel muestre un despliegue **Ready** y abre la URL asignada a ese despliegue desde la sección Deployments.
 
 ## Estructura
 
 ```text
-├── Dockerfile.vercel
+├── Dockerfile
 ├── dotnet/
 │   ├── Program.cs
 │   ├── NeuroSecurityStore.cs
