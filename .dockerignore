@@ -1,0 +1,6 @@
+.git/
+**/bin/
+**/obj/
+frontend/publish/
+.vercel/
+*.user

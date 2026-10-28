@@ -1,7 +1,6 @@
 @page "/"
-@rendermode InteractiveServer
 @implements IDisposable
-@inject NeuroSecurityStore Store
+@inject ApiClient Api
 @inject IJSRuntime JS
 
 @* JProduction author marker: JPROD-NSC-A81C. *@
@@ -203,7 +202,7 @@
                 <label class="wide">Novedad de cámaras
                     <select @bind="editNote">
                         <option value="">Selecciona una novedad</option>
-                        @foreach (var novelty in NeuroSecurityStore.NoveltyOptions) { <option value="@novelty">@novelty</option> }
+                        @foreach (var novelty in NoveltyOptions) { <option value="@novelty">@novelty</option> }
                     </select>
                 </label>
             }
@@ -226,7 +225,7 @@
             <label class="wide">Novedad de cámaras
                 <select @bind="bulkNote">
                     <option value="">Selecciona una novedad</option>
-                    @foreach (var novelty in NeuroSecurityStore.NoveltyOptions) { <option value="@novelty">@novelty</option> }
+                    @foreach (var novelty in NoveltyOptions) { <option value="@novelty">@novelty</option> }
                 </select>
             </label>
         }
@@ -248,6 +247,14 @@
     private static readonly TabInfo[] Tabs = [
         new("resumen", "Resumen", "◫"), new("sedes", "Sedes", "⌂"), new("novedades", "Novedades", "!"),
         new("historial", "Historial", "◷"), new("reportes", "Reportes", "▤"), new("admin", "Administración", "⚙")
+    ];
+    private static readonly string[] NoveltyOptions = [
+        "No conecta por fallo de internet.",
+        "No conecta por falta de energía.",
+        "Falla de DVR",
+        "Falla de disco duro",
+        "Cambio de horario por pila desgastada.",
+        "Cámara sin funcionamiento."
     ];
     private List<SedeView> sedes = [];
     private List<HistoryRow> history = [];
@@ -275,6 +282,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        try { user = await Api.RestoreSessionAsync(); }
+        catch (Exception ex) { error = ex.Message; }
         await LoadData();
         _ = RefreshLoop(refreshCancellation.Token);
     }
@@ -296,10 +305,14 @@
         error = null;
         try
         {
-            sedes = Store.GetSedes(showArchived);
-            stats = Store.GetStats();
-            history = Store.GetHistory(null, 100).historial;
-            users = user is null ? [] : Store.GetUsers();
+            var sedesTask = Api.GetSedesAsync(showArchived);
+            var statsTask = Api.GetStatsAsync();
+            var historyTask = Api.GetHistoryAsync();
+            await Task.WhenAll(sedesTask, statsTask, historyTask);
+            sedes = (await sedesTask).sedes;
+            stats = await statsTask;
+            history = (await historyTask).historial;
+            users = user is null ? [] : await Api.GetUsersAsync();
         }
         catch (Exception ex) { error = ex.Message; }
         finally { loading = false; }
@@ -331,11 +344,11 @@
     }
     private async Task Login()
     {
-        try { user = Store.Login(loginEmail, loginPassword); loginOpen = false; loginPassword = ""; notice = "Sesión iniciada."; await LoadData(); }
+        try { user = (await Api.LoginAsync(loginEmail, loginPassword)).user; loginOpen = false; loginPassword = ""; notice = "Sesión iniciada."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task LoginOnEnter(KeyboardEventArgs e) { if (e.Key == "Enter") await Login(); }
-    private void Logout() { user = null; currentTab = currentTab == "admin" ? "resumen" : currentTab; notice = "Sesión cerrada."; }
+    private async Task Logout() { await Api.LogoutAsync(); user = null; users = []; currentTab = currentTab == "admin" ? "resumen" : currentTab; notice = "Sesión cerrada."; }
     private void Print() => _ = JS.InvokeVoidAsync("window.print");
     private void OpenHistory(SedeView sede) => historyTarget = sede;
     private void EditSedeStatus(SedeView sede) { editTarget = sede; editCameras = sede.estado_camaras; editNote = sede.nota; editName = sede.nombre; editGroup = sede.grupo; }
@@ -343,56 +356,56 @@
     private async Task SaveStatus()
     {
         if (editTarget is null || user is null) return;
-        try { Store.UpdateSede(editTarget.id, editName, editGroup, null, null); Store.UpdateStatus(editTarget.id, editCameras, editCameras == "novedad" ? editNote : "", null, user); editTarget = null; notice = "Sede y estado de cámaras actualizados."; await LoadData(); }
+        try { await Api.UpdateSedeAsync(editTarget.id, editName, editGroup); await Api.UpdateStatusAsync(editTarget.id, editCameras, editCameras == "novedad" ? editNote : ""); editTarget = null; notice = "Sede y estado de cámaras actualizados."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task MarkOperational(SedeView sede)
     {
         if (user is null) return;
-        try { Store.MarkOperational(sede.id, user); notice = $"{sede.nombre} marcada como operativa."; await LoadData(); }
+        try { await Api.MarkOperationalAsync(sede.id); notice = $"{sede.nombre} marcada como operativa."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task CreateSede()
     {
         if (user is null) return;
-        try { Store.CreateSede(newName, newGroup, user); newName = newGroup = ""; notice = "Sede creada."; await LoadData(); }
+        try { await Api.CreateSedeAsync(newName, newGroup); newName = newGroup = ""; notice = "Sede creada."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task ToggleArchive(SedeView sede)
     {
         if (user is null) return;
-        try { Store.ToggleArchive(sede.id, user); notice = "Estado de archivo actualizado."; await LoadData(); }
+        try { await Api.ToggleArchiveAsync(sede.id); notice = "Estado de archivo actualizado."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task CreateAdmin()
     {
         if (user is null) return;
-        try { Store.CreateUser(newUserEmail, newUserName, newUserPassword, newUserRole); newUserName = newUserEmail = newUserPassword = ""; notice = "Administrador creado."; await LoadData(); }
+        try { await Api.CreateUserAsync(newUserEmail, newUserName, newUserPassword, newUserRole); newUserName = newUserEmail = newUserPassword = ""; notice = "Administrador creado."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task DeleteSuperAdmin(AdminUser target)
     {
         if (user is null || user.rol != "superadmin" || target.rol != "superadmin" || target.id == user.id) return;
         if (!await JS.InvokeAsync<bool>("confirm", $"¿Eliminar la cuenta de superadministrador {target.email}?")) return;
-        try { Store.DeleteSuperAdmin(target.id, user); notice = "Superadministrador eliminado."; await LoadData(); }
+        try { await Api.DeleteSuperAdminAsync(target.id); notice = "Superadministrador eliminado."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task ChangePassword()
     {
         if (user is null) return;
-        try { Store.ChangePassword(user.id, currentPassword, newPassword); currentPassword = newPassword = ""; notice = "Contraseña actualizada."; }
+        try { await Api.ChangePasswordAsync(currentPassword, newPassword); currentPassword = newPassword = ""; notice = "Contraseña actualizada."; }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task DeletePermanent(SedeView sede)
     {
         if (user is null || !await JS.InvokeAsync<bool>("confirm", $"¿Eliminar permanentemente la sede {sede.nombre}?")) return;
-        try { Store.DeleteSede(sede.id, user); notice = "Sede eliminada permanentemente."; await LoadData(); }
+        try { await Api.DeleteSedeAsync(sede.id); notice = "Sede eliminada permanentemente."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private async Task ResetDefaults()
     {
         if (user is null || !await JS.InvokeAsync<bool>("confirm", "¿Restablecer estados y reactivar las sedes archivadas? Se conservarán la lista de sedes y las cuentas de administrador.")) return;
-        try { Store.ResetDefaults(); notice = "Estados restablecidos; las sedes archivadas se reactivaron."; await LoadData(); }
+        try { await Api.ResetDefaultsAsync(); notice = "Estados restablecidos; las sedes archivadas se reactivaron."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
     private void OpenBulkReview()
@@ -406,17 +419,17 @@
         if (user is null) return;
         var updates = bulkSelected.Where(x => x.Value).Select(x => new BulkUpdate(
             x.Key, bulkCameras[x.Key], bulkCameras[x.Key] == "novedad" ? bulkNote : "")).ToList();
-        try { var count = Store.BulkUpdate(updates, user); showBulk = false; notice = $"{count} sedes actualizadas."; await LoadData(); }
+        try { var result = await Api.BulkUpdateAsync(updates); showBulk = false; notice = $"{result.actualizadas} sedes actualizadas."; await LoadData(); }
         catch (Exception ex) { error = ex.Message; }
     }
-    private async Task ExportSedes() => await JS.InvokeVoidAsync("downloadFile", "sedes.csv", Store.ExportSedesCsv());
-    private async Task ExportHistory() => await JS.InvokeVoidAsync("downloadFile", "historial.csv", Store.ExportHistoryCsv());
+    private async Task ExportSedes() => await JS.InvokeVoidAsync("downloadFile", "sedes.csv", await Api.ExportSedesAsync());
+    private async Task ExportHistory() => await JS.InvokeVoidAsync("downloadFile", "historial.csv", await Api.ExportHistoryAsync());
     private string StatusClass(SedeView s) => s.tiene_desactivado ? "red" : s.tiene_novedad ? "amber" : "green";
     private string GlobalStatus(SedeView s) => s.tiene_desactivado ? "Desactivado" : s.tiene_novedad ? "Con novedad" : "Operativo";
     private static string StatusText(string value) => value switch { "operativo" => "OPERATIVO", "desactivado" => "DESACTIVADO", "novedad" => "NOVEDAD", _ => value.ToUpperInvariant() };
     private async Task ToggleArchived() { showArchived = !showArchived; currentTab = "sedes"; await LoadData(); }
     private void OpenSedeManagement() { showSedeForm = true; currentTab = "sedes"; }
-    private static string BogotaDate(string value) => DateTime.TryParse(value, out var date) ? TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, "SA Pacific Standard Time").ToString("dd/MM/yyyy HH:mm") : value;
-    private static string BogotaTime() => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "SA Pacific Standard Time").ToString("HH:mm") + " COL";
+    private static string BogotaDate(string value) => DateTime.TryParse(value, out var date) ? TimeZoneInfo.ConvertTimeBySystemTimeZoneId(date, "America/Bogota").ToString("dd/MM/yyyy HH:mm") : value;
+    private static string BogotaTime() => TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "America/Bogota").ToString("HH:mm") + " COL";
     public void Dispose() { refreshCancellation.Cancel(); refreshCancellation.Dispose(); }
 }

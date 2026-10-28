@@ -1,0 +1,7 @@
+{
+  "buildCommand": "bash scripts/vercel-build.sh",
+  "outputDirectory": "frontend/publish/wwwroot",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

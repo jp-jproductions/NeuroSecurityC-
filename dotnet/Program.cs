@@ -1,14 +1,24 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using dotnet.Components;
 
 // JProduction author marker: JPROD-NSC-A81C.
 var builder = WebApplication.CreateBuilder(args);
 if (int.TryParse(Environment.GetEnvironmentVariable("PORT"), out var port) && port is > 0 and <= 65535)
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+var frontendOrigins = (builder.Configuration["FRONTEND_ORIGINS"] ?? "")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+if (builder.Environment.IsProduction() && frontendOrigins.Length == 0)
+    throw new InvalidOperationException("Configure FRONTEND_ORIGINS con el origen público del frontend en producción.");
+builder.Services.AddCors(options => options.AddPolicy("Frontend", policy =>
+{
+    if (frontendOrigins.Length > 0)
+        policy.WithOrigins(frontendOrigins);
+    else
+        policy.SetIsOriginAllowed(origin => Uri.TryCreate(origin, UriKind.Absolute, out var uri) && uri.IsLoopback);
+    policy.AllowAnyHeader().AllowAnyMethod();
+}));
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
@@ -28,13 +38,15 @@ var tokenKey = Encoding.UTF8.GetBytes(signingSecret);
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler(handler => handler.Run(async context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await context.Response.WriteAsJsonAsync(new { error = "Ocurrió un error inesperado." });
+    }));
     app.UseHsts();
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
-app.UseAntiforgery();
-app.MapStaticAssets();
+app.UseCors("Frontend");
 
 app.Use(async (context, next) =>
 {
@@ -154,7 +166,6 @@ admin.MapPost("/reset-defaults", (NeuroSecurityStore store) =>
     return Results.Ok(new { message = "Estados restablecidos y sedes archivadas reactivadas." });
 });
 
-app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 app.Run();
 
 static IResult Unauthorized() => Results.Json(new { error = "No autorizado. Debe iniciar sesión." }, statusCode: StatusCodes.Status401Unauthorized);

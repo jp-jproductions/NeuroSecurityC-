@@ -766,9 +766,9 @@
       "sede_id": "sede-45",
       "estado_camaras": "operativo",
       "nota": "",
-      "fecha_revision": "2026-10-26T01:15:29.656Z",
-      "actualizado_en": "2026-10-26T01:15:29.656Z",
-      "actualizado_por": "Sistema Inicial"
+      "fecha_revision": "2026-10-28T00:11:03.8698950Z",
+      "actualizado_en": "2026-10-28T00:11:03.8699005Z",
+      "actualizado_por": "Desarrollador"
     },
     "sede-46": {
       "sede_id": "sede-46",
@@ -877,6 +877,30 @@
       "estado_camaras_anterior": "novedad",
       "estado_camaras_nuevo": "operativo",
       "nota_anterior": "No conecta por fallo de internet.",
+      "nota_nueva": "",
+      "tipo_evento": "actualizacion"
+    },
+    {
+      "id": "906dc76349e049818a0c5cab2b0c284c",
+      "sede_id": "sede-45",
+      "sede_nombre": "ADMIN MAYORCA PISO 8",
+      "fecha": "2026-10-28T00:10:01.7397851Z",
+      "usuario": "Desarrollador",
+      "estado_camaras_anterior": "operativo",
+      "estado_camaras_nuevo": "novedad",
+      "nota_anterior": "",
+      "nota_nueva": "Falla de DVR",
+      "tipo_evento": "actualizacion"
+    },
+    {
+      "id": "ac82e47c4b35445cb6edddd27a652e43",
+      "sede_id": "sede-45",
+      "sede_nombre": "ADMIN MAYORCA PISO 8",
+      "fecha": "2026-10-28T00:11:03.8699178Z",
+      "usuario": "Desarrollador",
+      "estado_camaras_anterior": "novedad",
+      "estado_camaras_nuevo": "operativo",
+      "nota_anterior": "Falla de DVR",
       "nota_nueva": "",
       "tipo_evento": "actualizacion"
     }

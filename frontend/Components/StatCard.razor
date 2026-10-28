@@ -1,0 +1,10 @@
+<article class="stat-card @Tone">
+    <span>@Label</span>
+    <strong>@Value</strong>
+</article>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public int Value { get; set; }
+    [Parameter] public string Tone { get; set; } = "blue";
+}
